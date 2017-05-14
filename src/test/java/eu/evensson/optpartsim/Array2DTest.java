@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,25 +27,39 @@ public class Array2DTest {
 		a2DArray = new Array2D<>(WIDTH, HEIGHT);
 	}
 
+	@DisplayName("for each iterates over all elements in row first order")
+	@Test
+	void forEachIteratesOverAllElementsInRowFirstOrder() {
+		final AtomicInteger expectedX = new AtomicInteger(0);
+		final AtomicInteger expectedY = new AtomicInteger(0);
+		a2DArray.forEach((x, y) -> {
+			assertThat(x, is(expectedX.get()));
+			assertThat(y, is(expectedY.get()));
+
+			if (expectedX.incrementAndGet() == WIDTH) {
+				expectedX.set(0);
+				expectedY.incrementAndGet();
+			}
+		});
+		assertThat(expectedX.get(), is(0));
+		assertThat(expectedY.get(), is(HEIGHT));
+	}
+
 	@DisplayName("has null elements")
 	@Test
 	void hasNullElements() {
-		for (int x = 0; x < WIDTH; ++x) {
-			for (int y = 0; y < HEIGHT; ++y) {
-				assertThat(a2DArray.get(x, y), is(nullValue()));
-			}
-		}
+		a2DArray.forEach((x, y) -> {
+			assertThat(a2DArray.get(x, y), is(nullValue()));
+		});
 	}
 
 	@DisplayName("returns same elements as was set")
 	@Test
 	void returnsSameElementsAsWasSet() {
-		for (int x = 0; x < WIDTH; ++x) {
-			for (int y = 0; y < HEIGHT; ++y) {
-				final Integer value = x * y;
-				a2DArray.set(x, y, value);
-				assertThat(a2DArray.get(x, y), is(sameInstance(value)));
-			}
-		}
+		a2DArray.forEach((x, y) -> {
+			final Integer value = x * y;
+			a2DArray.set(x, y, value);
+			assertThat(a2DArray.get(x, y), is(sameInstance(value)));
+		});
 	}
 }
