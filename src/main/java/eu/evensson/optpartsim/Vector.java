@@ -18,6 +18,10 @@ public class Vector {
 		return y;
 	}
 
+	public Vector add(final Vector otherVector) {
+		return new Vector(x + otherVector.x, y + otherVector.y);
+	}
+
 	// Generated methods below
 	@Override
 	public String toString() {
