@@ -81,4 +81,42 @@ public class VectorTest {
 			}
 		}
 	}
+
+	@DisplayName("when multiplied with scalar")
+	@Nested
+	class WhenMultipliedWithScalar {
+
+		static final double SCALAR = 2.3;
+
+		Vector multipliedVector;
+
+		@BeforeEach
+		void multiplyWithScalar() {
+			multipliedVector = aVector.multiply(SCALAR);
+		}
+
+		@DisplayName("is not modified")
+		@Test
+		void isNotModified() {
+			assertThat(aVector, is(new Vector(X, Y)));
+		}
+
+
+		@DisplayName("returns a vector with")
+		@Nested
+		class ReturnsAVectorWith {
+
+			@DisplayName("an X that is multiplied with the scalar")
+			@Test
+			void anXThatIsMultipliedWithTheScalar() {
+				assertThat(multipliedVector.x(), is(X * SCALAR));
+			}
+
+			@DisplayName("a Y that is multiplied with the scalar")
+			@Test
+			void aYThatIsMultipliedWithTheScalar() {
+				assertThat(multipliedVector.y(), is(Y * SCALAR));
+			}
+		}
+	}
 }

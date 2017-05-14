@@ -22,6 +22,10 @@ public class Vector {
 		return new Vector(x + otherVector.x, y + otherVector.y);
 	}
 
+	public Vector multiply(final double scalar) {
+		return new Vector(x * scalar, y * scalar);
+	}
+
 	// Generated methods below
 	@Override
 	public String toString() {
