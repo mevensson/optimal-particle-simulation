@@ -18,15 +18,23 @@ public class ParticleTest {
 	@ParameterizedTest(name = "id={0}")
 	@ValueSource(longs= {1, 12345678, Long.MAX_VALUE})
 	void hasAnId(final long id) {
-		final Particle particle = new Particle(id, null, null);
+		final Particle particle = new Particle(id, 0.0, null, null);
 		assertThat(particle.id(), is(id));
+	}
+
+	@DisplayName("has a Time")
+	@Test
+	void hasATime() {
+		final double time = 1.4;
+		final Particle particle = new Particle(1, time, null, null);
+		assertThat(particle.time(), is(time));
 	}
 
 	@DisplayName("has a Position")
 	@Test
 	void hasAPosition() {
 		final Vector position = new Vector(1.0, 2.0);
-		final Particle particle = new Particle(1, position, null);
+		final Particle particle = new Particle(1, 0.0, position, null);
 		assertThat(particle.position(), is(position));
 	}
 
@@ -34,7 +42,9 @@ public class ParticleTest {
 	@Test
 	void hasAVelocity() {
 		final Vector velocity = new Vector(1.0, 2.0);
-		final Particle particle = new Particle(1, null, velocity);
+		final Particle particle = new Particle(1, 0.0, null, velocity);
 		assertThat(particle.velocity(), is(velocity));
 	}
+
+
 }
