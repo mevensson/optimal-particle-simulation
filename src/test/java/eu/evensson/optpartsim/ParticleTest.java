@@ -3,10 +3,9 @@ package eu.evensson.optpartsim;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -14,37 +13,40 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitPlatform.class)
 public class ParticleTest {
 
+	static final long ID = 12;
+	static final double TIME = 1.3;
+	static final Vector POSITION = new Vector(10.0, 10.0);
+	static final Vector VELOCITY = new Vector(20.0, 20.0);
+
+	Particle aParticle;
+
+	@BeforeEach
+	void createParticle() {
+		aParticle = new Particle(ID, TIME, POSITION, VELOCITY);
+	}
+
 	@DisplayName("has an Id")
-	@ParameterizedTest(name = "id={0}")
-	@ValueSource(longs= {1, 12345678, Long.MAX_VALUE})
-	void hasAnId(final long id) {
-		final Particle particle = new Particle(id, 0.0, null, null);
-		assertThat(particle.id(), is(id));
+	@Test
+	void hasAnId() {
+		assertThat(aParticle.id(), is(ID));
 	}
 
 	@DisplayName("has a Time")
 	@Test
 	void hasATime() {
-		final double time = 1.4;
-		final Particle particle = new Particle(1, time, null, null);
-		assertThat(particle.time(), is(time));
+		assertThat(aParticle.time(), is(TIME));
 	}
 
 	@DisplayName("has a Position")
 	@Test
 	void hasAPosition() {
-		final Vector position = new Vector(1.0, 2.0);
-		final Particle particle = new Particle(1, 0.0, position, null);
-		assertThat(particle.position(), is(position));
+		assertThat(aParticle.position(), is(POSITION));
 	}
 
 	@DisplayName("has a Velocity")
 	@Test
 	void hasAVelocity() {
-		final Vector velocity = new Vector(1.0, 2.0);
-		final Particle particle = new Particle(1, 0.0, null, velocity);
-		assertThat(particle.velocity(), is(velocity));
+		assertThat(aParticle.velocity(), is(VELOCITY));
 	}
-
 
 }
