@@ -31,6 +31,11 @@ public class Particle {
 		return velocity;
 	}
 
+	public Particle move(final double newTime) {
+		final Vector movedDistance = velocity.multiply(newTime - time);
+		final Vector newPosition = position.add(movedDistance);
+		return new Particle(id, newTime, newPosition, velocity);
+	}
 
 	// Generated methods below
 

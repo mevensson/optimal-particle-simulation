@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -49,4 +50,55 @@ public class ParticleTest {
 		assertThat(aParticle.velocity(), is(VELOCITY));
 	}
 
+	@DisplayName("when moved")
+	@Nested
+	class WhenMoved {
+
+		static final double NEW_TIME = 7.3;
+
+		Particle movedParticle;
+
+		@BeforeEach
+		void moveParticle() {
+			movedParticle = aParticle.move(NEW_TIME);
+		}
+
+		@DisplayName("is not modified")
+		@Test
+		void isNotModified() {
+			assertThat(aParticle,
+					is(new Particle(ID, TIME, POSITION, VELOCITY)));
+		}
+
+		@DisplayName("returns a Particle with")
+		@Nested
+		class ReturnsAParticleWith {
+
+			@DisplayName("the same id")
+			@Test
+			void hasSameId() {
+				assertThat(movedParticle.id(), is(ID));
+			}
+
+			@DisplayName("the new time")
+			@Test
+			void hasTheNewTime() {
+				assertThat(movedParticle.time(), is(NEW_TIME));
+			}
+
+			@DisplayName("a position that is the sum old position "
+					+ "and the velocity multiplied with the time difference")
+			@Test
+			void hasTheNewPosition() {
+				assertThat(movedParticle.position(),
+						is(POSITION.add(VELOCITY.multiply(NEW_TIME - TIME))));
+			}
+
+			@DisplayName("the same velocity")
+			@Test
+			void hasSameVelocity() {
+				assertThat(movedParticle.velocity(), is(VELOCITY));
+			}
+		}
+	}
 }
