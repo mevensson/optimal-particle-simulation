@@ -1,6 +1,6 @@
 package eu.evensson.optpartsim;
 
-public class Event {
+public class Event implements Comparable<Event> {
 
 	private final double time;
 
@@ -10,6 +10,11 @@ public class Event {
 
 	public double time() {
 		return time;
+	}
+
+	@Override
+	public int compareTo(final Event o) {
+		return Double.compare(time, o.time);
 	}
 
 	// Generated methods
