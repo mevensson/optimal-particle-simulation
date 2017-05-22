@@ -28,13 +28,15 @@ public class SimulationTest {
 			STRUCTURE_Y, STRUCTURE_WIDTH, STRUCTURE_HEIGHT), WIDTH_IN_CELLS,
 			HEIGHT_IN_CELLS);
 
+	final EventQueue eventQueue = new EventQueue();
+
 	final List<Particle> particles = new ArrayList<>();
 
 	Simulation aSimulation;
 
 	@BeforeEach
 	void createSimulation() {
-		aSimulation = new Simulation(cellStructure);
+		aSimulation = new Simulation(cellStructure, eventQueue);
 	}
 
 	@DisplayName("with no particles")
@@ -46,7 +48,6 @@ public class SimulationTest {
 		void returnsZeroMomentum() {
 			assertThat(aSimulation.simulate(particles), is(0.0));
 		}
-
 	}
 
 	@DisplayName("with one particle")
@@ -65,12 +66,41 @@ public class SimulationTest {
 
 		@DisplayName("adds particle to Cell Structure")
 		@Test
-		void addsAllParticlesToCellStructure() {
+		void addsParticleToCellStructure() {
 			aSimulation.simulate(particles);
 
 			// Should not throw
 			cellStructure.remove(PARTICLE_ONE);
 		}
+	}
 
+	@DisplayName("with transfer left particle")
+	@Nested
+	class WithTransferLeftParticle {
+
+		static final int CELL_POSITION = 1;
+		static final double CELL_WIDTH = STRUCTURE_WIDTH / WIDTH_IN_CELLS;
+		static final double SPEED = 1.0;
+		static final double TIME = 12.3;
+
+		final Vector POSITION = new Vector(
+				STRUCTURE_X + (CELL_POSITION + 0.5) * CELL_WIDTH,
+				STRUCTURE_Y + 0.1);
+		final Vector VELOCITY = new Vector(-SPEED, 0.0);
+		final Particle PARTICLE = new Particle(0, TIME, POSITION, VELOCITY);
+
+		@BeforeEach
+		void addParticleAndSimulate() {
+			particles.add(PARTICLE);
+			aSimulation.simulate(particles);
+		}
+
+		@DisplayName("adds Transfer Event to Event Queue")
+		@Test
+		void addsTransferEventToEventQueue() {
+			final double transferTime = TIME + 0.5 * CELL_WIDTH / SPEED;
+			final TransferEvent transferEvent = new TransferEvent(transferTime, PARTICLE);
+			assertThat(eventQueue.removeFirst(), is(transferEvent));
+		}
 	}
 }
