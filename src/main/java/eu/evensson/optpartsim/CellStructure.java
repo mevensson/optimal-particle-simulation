@@ -47,8 +47,10 @@ public class CellStructure {
 		});
 	}
 
-	public void insert(final Particle particle) {
-		getCell(particle).add(particle);
+	public Box insert(final Particle particle) {
+		final Cell cell = getCell(particle);
+		cell.add(particle);
+		return cell.box();
 	}
 
 	public Box remove(final Particle particle) {

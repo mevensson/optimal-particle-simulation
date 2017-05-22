@@ -56,6 +56,14 @@ public class CellStructureTest {
 			aCellStructure.insert(aParticle);
 		}
 
+		@DisplayName("returns top left cell when particle inserted")
+		@Test
+		void returnsTopLeftCellWhenParticleInserted() {
+			final Box expectedBox = new Box(STRUCTURE_X, STRUCTURE_Y,
+					CELL_WIDTH, CELL_HEIGHT);
+			assertThat(aCellStructure.insert(aParticle), is(expectedBox));
+		}
+
 		@DisplayName("returns top left cell when particle removed")
 		@Test
 		void returnsTopLeftCellWhenParticleRemoved() {
