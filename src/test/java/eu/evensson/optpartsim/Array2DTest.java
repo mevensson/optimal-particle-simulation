@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 public class Array2DTest {
 
 	static final int WIDTH = 3;
-	static final int HEIGHT = 4;
+	static final int HEIGHT = 5;
 
 	Array2D<Integer> a2DArray;
 
@@ -59,6 +59,9 @@ public class Array2DTest {
 		a2DArray.forEach((x, y) -> {
 			final Integer value = x * y;
 			a2DArray.set(x, y, value);
+		});
+		a2DArray.forEach((x, y) -> {
+			final Integer value = x * y;
 			assertThat(a2DArray.get(x, y), is(sameInstance(value)));
 		});
 	}

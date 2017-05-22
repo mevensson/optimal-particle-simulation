@@ -1,5 +1,6 @@
 package eu.evensson.optpartsim;
 
+import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 public class Array2D<T> {
@@ -32,7 +33,15 @@ public class Array2D<T> {
 	}
 
 	private int getIndex(final int x, final int y) {
-		return x * width + y;
+		return y * width + x;
+	}
+
+	// Generated code
+
+	@Override
+	public String toString() {
+		return "Array2D [array=" + Arrays.toString(array) + ", width=" + width
+				+ ", height=" + height + "]";
 	}
 
 }
