@@ -1,5 +1,8 @@
 package eu.evensson.optpartsim;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 public class Particle {
 
 	private final long id;
@@ -29,6 +32,16 @@ public class Particle {
 
 	public Vector velocity() {
 		return velocity;
+	}
+
+	public double intersects(final Box box) {
+		final double timeLeft = (box.x() - position.x()) / velocity.x();
+		final double timeRight = (box.x() + box.width() - position.x())
+				/ velocity.x();
+		final double timeTop = (box.y() - position.y()) / velocity.y();
+		final double timeBottom = (box.y() + box.height() - position.y())
+				/ velocity.y();
+		return time + min(max(timeLeft, timeRight), max(timeTop, timeBottom));
 	}
 
 	public Particle move(final double newTime) {

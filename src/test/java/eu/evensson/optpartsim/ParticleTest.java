@@ -101,4 +101,47 @@ public class ParticleTest {
 			}
 		}
 	}
+
+	@DisplayName("returns intersection time when it intersects a box")
+	@Nested
+	class IntersectsABox {
+		static final double SPEED = 2.0;
+		final Box BOX = new Box(5.0, 5.0, 10.0, 10.0);
+
+		@DisplayName("to the left")
+		@Test
+		void toTheLeft() {
+			final Vector velocity = new Vector(-SPEED, SPEED / 2);
+			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
+			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
+			assertThat(particle.intersects(BOX), is(intersectionTime));
+		}
+
+		@DisplayName("to the right")
+		@Test
+		void toTheRight() {
+			final Vector velocity = new Vector(SPEED, SPEED / 2);
+			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
+			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
+			assertThat(particle.intersects(BOX), is(intersectionTime));
+		}
+
+		@DisplayName("to the top")
+		@Test
+		void toTheTop() {
+			final Vector velocity = new Vector(SPEED / 2, -SPEED);
+			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
+			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
+			assertThat(particle.intersects(BOX), is(intersectionTime));
+		}
+
+		@DisplayName("to the bottom")
+		@Test
+		void toTheBottom() {
+			final Vector velocity = new Vector(SPEED / 2, SPEED);
+			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
+			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
+			assertThat(particle.intersects(BOX), is(intersectionTime));
+		}
+	}
 }
