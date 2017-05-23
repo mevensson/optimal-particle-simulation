@@ -16,7 +16,7 @@ public class Application {
 	}
 
 	public void run(final String[] args) {
-		if (args.length != 3) {
+		if (args.length != 4) {
 			printer.print(USAGE);
 			return;
 		}
@@ -24,7 +24,8 @@ public class Application {
 		final double result = simulation.simulate(
 				Long.parseLong(args[0]),
 				Double.parseDouble(args[1]),
-				Long.parseLong(args[2]));
+				Long.parseLong(args[2]),
+				Long.parseLong(args[3]));
 
 		printer.print(String.format(SIMULATION_RESULT, result));
 	}
