@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 
 @DisplayName("A Simulation")
 @RunWith(JUnitPlatform.class)
-public class SimulationTest {
+public class OldSimulationTest {
 
 	final static double STRUCTURE_X = 10.0;
 	final static double STRUCTURE_Y = 20.0;
@@ -32,11 +32,11 @@ public class SimulationTest {
 
 	final List<Particle> particles = new ArrayList<>();
 
-	Simulation aSimulation;
+	OldSimulation aSimulation;
 
 	@BeforeEach
 	void createSimulation() {
-		aSimulation = new Simulation(cellStructure, eventQueue);
+		aSimulation = new OldSimulation(cellStructure, eventQueue);
 	}
 
 	@DisplayName("with no particles")
