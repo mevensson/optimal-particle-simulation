@@ -25,6 +25,14 @@ public class EventQueueTest {
 		anEventQueue = new EventQueue();
 	}
 
+	@DisplayName("throws EventQueueEmptyException on peek")
+	@Test
+	void throwsOnPeek() {
+		assertThrows(EventQueueEmptyException.class, () -> {
+			anEventQueue.peek();
+		});
+	}
+
 	@DisplayName("throws EventQueueEmptyException on remove first")
 	@Test
 	void throwsOnRemoveFirst() {
@@ -45,6 +53,12 @@ public class EventQueueTest {
 			anEventQueue.add(EVENT_FIRST);
 		}
 
+		@DisplayName("returns the event on peek")
+		@Test
+		void returnsTheEventOnPeek() {
+			assertThat(anEventQueue.peek(), is(EVENT_FIRST));
+		}
+
 		@DisplayName("returns the event on remove first")
 		@Test
 		void returnsTheEventOnRemoveFirst() {
@@ -59,6 +73,19 @@ public class EventQueueTest {
 			@BeforeEach
 			void addLaterEvent() {
 				anEventQueue.add(EVENT_LATER);
+			}
+
+			@DisplayName("returns the first event on peek")
+			@Test
+			void returnsTheFirstEventOnPeek() {
+				assertThat(anEventQueue.peek(), is(EVENT_FIRST));
+			}
+
+			@DisplayName("returns the first event on second peek")
+			@Test
+			void returnsTheFirstEventOnSecondPeek() {
+				anEventQueue.peek();
+				assertThat(anEventQueue.peek(), is(EVENT_FIRST));
 			}
 
 			@DisplayName("returns the first event on remove first")

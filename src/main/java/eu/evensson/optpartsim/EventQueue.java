@@ -11,16 +11,24 @@ public class EventQueue {
 	public class EventQueueEmptyException extends RuntimeException {
 	}
 
+	public void add(final Event event) {
+		events.add(event);
+	}
+
+	public Event peek() {
+		if (events.isEmpty() ) {
+			throw new EventQueueEmptyException();
+		}
+
+		return events.peek();
+	}
+
 	public Event removeFirst() {
 		if (events.isEmpty() ) {
 			throw new EventQueueEmptyException();
 		}
 
 		return events.remove();
-	}
-
-	public void add(final Event event) {
-		events.add(event);
 	}
 
 }
