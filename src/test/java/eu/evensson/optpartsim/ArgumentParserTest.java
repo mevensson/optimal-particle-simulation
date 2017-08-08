@@ -16,7 +16,7 @@ public class ArgumentParserTest {
 	private static final String HELP_MESSAGE =
 			"Usage: optimal-particle-simulation [options]\n" +
 			"  Options:\n" +
-			"    -h\n" +
+			"    -h, --help\n" +
 			"      Display this help and exit\n";
 
 	Printer printer = mock(Printer.class);
@@ -30,8 +30,16 @@ public class ArgumentParserTest {
 
 	@DisplayName("prints help on -h")
 	@Test
-	void printsHelp() {
+	void printsHelpShortOption() {
 		argumentParser.parse(new String[]{ "-h" });
+
+		verify(printer).print(HELP_MESSAGE);
+	}
+
+	@DisplayName("prints help on --help")
+	@Test
+	void printsHelpLongOption() {
+		argumentParser.parse(new String[]{ "--help" });
 
 		verify(printer).print(HELP_MESSAGE);
 	}

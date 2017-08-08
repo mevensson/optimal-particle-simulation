@@ -22,7 +22,7 @@ public class AcceptanceTest {
 	private static final String HELP_MESSAGE =
 			"Usage: optimal-particle-simulation [options]\n" +
 			"  Options:\n" +
-			"    -h\n" +
+			"    -h, --help\n" +
 			"      Display this help and exit\n\n";
 
 	private final ByteArrayOutputStream systemOut = new ByteArrayOutputStream();
@@ -42,7 +42,19 @@ public class AcceptanceTest {
 
 	@DisplayName("prints help on '-h'")
 	@Test
-	void printsHelp() {
+	void printsHelpShortOption() {
+		final String[] args = new String[] {
+				"-h"
+		};
+
+		Main.main(args);
+
+		assertThat(systemOut.toString(), is(HELP_MESSAGE));
+	}
+
+	@DisplayName("prints help on '--help'")
+	@Test
+	void printsHelpLongOption() {
 		final String[] args = new String[] {
 				"-h"
 		};
