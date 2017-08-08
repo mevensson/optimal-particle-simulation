@@ -16,9 +16,11 @@ public class JCommanderArgumentParser implements ArgumentParser {
 
 	@Override
 	public Arguments parse(final String[] args) {
+		final Arguments arguments = new Arguments();
 		final JCommander jCommander = JCommander.newBuilder()
 			.programName("optimal-particle-simulation")
 			.addObject(this)
+			.addObject(arguments)
 			.build();
 		jCommander.parse(args);
 
@@ -26,9 +28,10 @@ public class JCommanderArgumentParser implements ArgumentParser {
 			final StringBuilder usageString = new StringBuilder();
 			jCommander.usage(usageString);
 			printer.print(usageString.toString());
+			return null;
 		}
 
-		return null;
+		return arguments;
 	}
 
 }
