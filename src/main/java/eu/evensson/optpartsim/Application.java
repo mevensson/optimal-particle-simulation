@@ -13,7 +13,7 @@ public class Application {
 		this.simulation = simulation;
 	}
 
-	public void run() {
+	public void run(final String[] args) {
 		final double result = simulation.simulate();
 
 		printer.print(String.format(SIMULATION_RESULT, result));

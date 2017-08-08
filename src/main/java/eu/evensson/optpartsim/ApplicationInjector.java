@@ -2,7 +2,7 @@ package eu.evensson.optpartsim;
 
 public class ApplicationInjector {
 
-	public static Application injectApplication() {
+	public static Application injectApplication(final ApplicationScope scope) {
 		return new Application(injectPrinter(), injectSimulation());
 	}
 

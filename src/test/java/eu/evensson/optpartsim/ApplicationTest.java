@@ -34,7 +34,7 @@ public class ApplicationTest {
 	void printsSimulationResult() {
 		when(simulation.simulate()).thenReturn(SIMULATION_RESULT);
 
-		application.run();
+		application.run(null);
 
 		verify(printer).print(
 				String.format(SIMULATION_RESULT_TEXT, SIMULATION_RESULT));
