@@ -27,7 +27,10 @@ public class ArgumentParserTest {
 			"      Default: 0.0\n" +
 			"    -p\n" +
 			"      Number of parameters\n" +
-			"      Default: 0\n";
+			"      Default: 0\n" +
+			"    -v\n" +
+			"      Max initial velocity\n" +
+			"      Default: 0.0\n";
 
 	Printer printer = mock(Printer.class);
 
@@ -81,5 +84,20 @@ public class ArgumentParserTest {
 		final Arguments arguments = argumentParser.parse(args);
 
 		assertThat(arguments.simulationDuration(), is(simulationDuration));
+	}
+
+	@DisplayName("parses max initial velocity")
+	@ParameterizedTest
+	@ValueSource(doubles = { -Double.MAX_VALUE, -Double.MIN_VALUE, 0.0,
+			Double.MIN_VALUE, Double.MAX_VALUE })
+	void parsesMaxInitialVelocity(final double maxInitialVelocity) {
+		final String[] args = new String[] {
+				"-v",
+				Double.toString(maxInitialVelocity)
+		};
+
+		final Arguments arguments = argumentParser.parse(args);
+
+		assertThat(arguments.maxInitialVelocity(), is(maxInitialVelocity));
 	}
 }
