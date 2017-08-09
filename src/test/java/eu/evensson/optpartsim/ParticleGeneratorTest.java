@@ -1,6 +1,7 @@
 package eu.evensson.optpartsim;
 
 import static eu.evensson.optpartsim.Vector.polar;
+import static eu.evensson.optpartsim.Vector.vector;
 import static java.lang.Math.PI;
 import static java.util.Arrays.stream;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,38 +41,46 @@ public class ParticleGeneratorTest {
 	@DisplayName("returns empty list when num particles is zero")
 	@Test
 	void returnsEmptyListWhenNumParticlesIsZero() {
-		final List<Particle> particleList = particleGenerator.generate(0, 0.0);
+		final List<Particle> particleList = particleGenerator.generate(0, 0.0, 0.0);
 
 		assertThat(particleList, is(empty()));
 	}
 
 	@DisplayName("returns list with particles")
 	@ParameterizedTest
-	@CsvSource({ "1, 10.0", "2, 20.0" })
-	void returnsListWithParticles(final int numParticles, final double maxVelocity) {
+	@CsvSource({ "1, 5.0, 10.0", "2, 10.0, 20.0" })
+	void returnsListWithParticles(final int numParticles, final double boxWidth,
+			final double maxVelocity) {
+		final double[] expectedXPositions =
+				stubRandomDoubleStream(numParticles, 0.0, boxWidth);
 		final double[] expectedAbsVelocities =
-				new Random().doubles(numParticles, 0.0, maxVelocity).toArray();
-		when(random.doubles(numParticles, 0.0, maxVelocity))
-				.thenReturn(stream(expectedAbsVelocities));
-
+				stubRandomDoubleStream(numParticles, 0.0, maxVelocity);
 		final double[] expectedAngles =
-				new Random().doubles(numParticles, 0.0, PI).toArray();
-		when(random.doubles(numParticles, 0.0, PI))
-				.thenReturn(stream(expectedAngles));
+				stubRandomDoubleStream(numParticles, 0.0, PI);
 
-		final List<Particle> particleList = particleGenerator.generate(numParticles, maxVelocity);
+		final List<Particle> particleList =
+				particleGenerator.generate(numParticles, boxWidth, maxVelocity);
 
 		assertThat(particleList, hasSize(numParticles));
-		int expectedParticleIndex = 1;
+		int index = 0;
 		for (final Particle actualParticle : particleList) {
 			assertThat(actualParticle, is(notNullValue()));
-			final Vector position = null;
-			final Vector velocity = polar(expectedAbsVelocities[expectedParticleIndex - 1],
-					expectedAngles[expectedParticleIndex - 1]);
+			final Vector position = vector(expectedXPositions[index], 0.0);
+			final Vector velocity =
+					polar(expectedAbsVelocities[index], expectedAngles[index]);
 			final Particle expectedParticle =
-					new Particle(expectedParticleIndex, EXPECTED_START_TIME, position, velocity);
+					new Particle(index + 1, EXPECTED_START_TIME, position, velocity);
 			assertThat(actualParticle, is(expectedParticle));
-			expectedParticleIndex += 1;
+			index += 1;
 		}
+	}
+
+	private double[] stubRandomDoubleStream(final int numValues,
+			final double minValue, final double maxValue) {
+		final double[] values =
+				new Random().doubles(numValues, minValue, maxValue).toArray();
+		when(random.doubles(numValues, minValue, maxValue))
+				.thenReturn(stream(values));
+		return values;
 	}
 }

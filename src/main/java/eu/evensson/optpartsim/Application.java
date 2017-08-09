@@ -27,7 +27,9 @@ public class Application {
 		}
 
 		particleGenerator.generate(
-				arguments.particles(), arguments.maxInitialVelocity());
+				arguments.particles(),
+				arguments.boxWidth(),
+				arguments.maxInitialVelocity());
 
 		final double result = simulation.simulate();
 

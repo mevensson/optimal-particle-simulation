@@ -60,11 +60,13 @@ public class ApplicationTest {
 
 	@DisplayName("generates particles")
 	@ParameterizedTest
-	@CsvSource({ "1234, 56.78" })
-	void generatesParticles(final long numParticles, final double maxInitialVelocity) {
+	@CsvSource({ "1234, 56.78, 90.12" })
+	void generatesParticles(final long numParticles,
+			final double boxWidth, final double maxInitialVelocity) {
 		final String[] args = new String[] {
 				"-p", Long.toString(numParticles),
-				"-v", Double.toString(maxInitialVelocity)
+				"-v", Double.toString(maxInitialVelocity),
+				"-w", Double.toString(boxWidth)
 		};
 		final JCommanderArgumentParser realArgumentParser = new JCommanderArgumentParser(printer);
 		final Arguments arguments = realArgumentParser.parse(args);
@@ -73,7 +75,7 @@ public class ApplicationTest {
 
 		application.run(args);
 
-		verify(particleGenerator).generate(numParticles, maxInitialVelocity);
+		verify(particleGenerator).generate(numParticles, boxWidth, maxInitialVelocity);
 	}
 
 	@DisplayName("prints simulation result")
