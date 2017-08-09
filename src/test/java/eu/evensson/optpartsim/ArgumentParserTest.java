@@ -70,7 +70,8 @@ public class ArgumentParserTest {
 
 	@DisplayName("parses simulation duration")
 	@ParameterizedTest
-	@ValueSource(doubles = { 0.0 })
+	@ValueSource(doubles = { -Double.MAX_VALUE, -Double.MIN_VALUE, 0.0,
+			Double.MIN_VALUE, Double.MAX_VALUE })
 	void parsesSimulationTime(final double simulationDuration) {
 		final String[] args = new String[] {
 				"-d",
