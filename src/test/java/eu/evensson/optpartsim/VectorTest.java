@@ -1,6 +1,9 @@
 package eu.evensson.optpartsim;
 
+import static eu.evensson.optpartsim.Vector.polar;
 import static eu.evensson.optpartsim.Vector.vector;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -35,6 +38,32 @@ public class VectorTest {
 	@Test
 	void hasAY() {
 		assertThat(aVector.y(), is(Y));
+	}
+
+	@DisplayName("constructed with polar coordinates")
+	@Nested
+	class ConstructesWithPolarCoordinates {
+
+		static final double DISTANCE = 10.0;
+		static final double ANGLE = 2.0;
+
+		@BeforeEach
+		void createVector() {
+			aVector = polar(DISTANCE, ANGLE);
+		}
+
+		@DisplayName("has an x value")
+		@Test
+		void hasAnX() {
+			assertThat(aVector.x(), is(DISTANCE * cos(ANGLE)));
+		}
+
+		@DisplayName("has a y value")
+		@Test
+		void hasAY() {
+			assertThat(aVector.y(), is(DISTANCE * sin(ANGLE)));
+		}
+
 	}
 
 	@DisplayName("when added with other vector")

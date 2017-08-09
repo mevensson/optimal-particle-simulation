@@ -1,9 +1,16 @@
 package eu.evensson.optpartsim;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 public class Vector {
 
 	public static Vector vector(final double x, final double y) {
 		return new Vector(x, y);
+	}
+
+	public static Vector polar(final double distance, final double angle) {
+		return vector(distance * cos(angle), distance * sin(angle));
 	}
 
 	private final double x;
