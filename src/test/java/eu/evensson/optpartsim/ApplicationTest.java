@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
@@ -25,13 +27,15 @@ public class ApplicationTest {
 
 	Printer printer = mock(Printer.class);
 	ArgumentParser argumentParser = mock(ArgumentParser.class);
+	ParticleGenerator particleGenerator = mock(ParticleGenerator.class);
 	Simulation simulation = mock(Simulation.class);
 
 	Application application;
 
 	@BeforeEach
 	void createApplication() {
-		application = new Application(printer, argumentParser, simulation);
+		application = new Application(printer, argumentParser,
+				particleGenerator, simulation);
 	}
 
 	@DisplayName("parses arguments")
@@ -52,6 +56,24 @@ public class ApplicationTest {
 		application.run(ARGS);
 
 		verify(simulation, never()).simulate();
+	}
+
+	@DisplayName("generates particles")
+	@ParameterizedTest
+	@CsvSource({ "1234, 56.78" })
+	void generatesParticles(final long numParticles, final double maxInitialVelocity) {
+		final String[] args = new String[] {
+				"-p", Long.toString(numParticles),
+				"-v", Double.toString(maxInitialVelocity)
+		};
+		final JCommanderArgumentParser realArgumentParser = new JCommanderArgumentParser(printer);
+		final Arguments arguments = realArgumentParser.parse(args);
+
+		when(argumentParser.parse(args)).thenReturn(arguments);
+
+		application.run(args);
+
+		verify(particleGenerator).generate(numParticles, maxInitialVelocity);
 	}
 
 	@DisplayName("prints simulation result")

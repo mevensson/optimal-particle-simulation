@@ -1,10 +1,12 @@
 package eu.evensson.optpartsim;
 
+import java.util.Random;
+
 public class ApplicationInjector {
 
 	public static Application injectApplication(final ApplicationScope scope) {
 		return new Application(injectPrinter(), injectArgumentParser(),
-				injectSimulation());
+				injectParitcleGenerator(), injectSimulation());
 	}
 
 	private static Printer injectPrinter() {
@@ -15,6 +17,10 @@ public class ApplicationInjector {
 		return new JCommanderArgumentParser(injectPrinter());
 	}
 
+	private static ParticleGenerator injectParitcleGenerator() {
+		return new RandomParticleGenerator(injectRandom());
+	}
+
 	private static Simulation injectSimulation() {
 		return new Simulation() {
 			@Override
@@ -22,6 +28,14 @@ public class ApplicationInjector {
 				return 0;
 			}
 		};
+	}
+
+	private static Random injectRandom() {
+		return new Random(injectSeed());
+	}
+
+	private static long injectSeed() {
+		return 0;
 	}
 
 }
