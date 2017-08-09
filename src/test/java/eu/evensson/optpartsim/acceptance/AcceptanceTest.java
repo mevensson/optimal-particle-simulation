@@ -52,7 +52,7 @@ public class AcceptanceTest {
 				"      Default: 0\n" +
 				"    -v\n" +
 				"      Max initial velocity\n" +
-				"      Default: 0.0\n" +
+				"      Default: 1.0\n" +
 				"\n";
 
 		@DisplayName("on '-h'")
@@ -134,17 +134,6 @@ public class AcceptanceTest {
 			@Test
 			void prints0MomentumOnZeroDurationArguemnt() {
 				final String[] args = new String[] { "-p", "1", "-d", "0.0" };
-
-				Main.main(args);
-
-				assertThat(systemOut.toString(),
-						is(String.format(SIMULATION_RESULT_FORMAT, 0.0)));
-			}
-
-			@DisplayName("prints 0 momentum on 0.0 max initial velocity")
-			@Test
-			void prints0MomentumOnZeroMaxInitialVelocity() {
-				final String[] args = new String[] { "-p", "1", "-v", "0.0" };
 
 				Main.main(args);
 

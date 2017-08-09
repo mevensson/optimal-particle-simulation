@@ -8,11 +8,10 @@ public class Arguments {
 	private long particles;
 
 	@Parameter(names = {"-v" }, description = "Max initial velocity")
-	private double maxInitialVelocity;
+	private double maxInitialVelocity = 1.0;
 
 	@Parameter(names = {"-d" }, description = "Simulation duration")
 	private double simulationDuration;
-
 
 	public long particles() {
 		return particles;

@@ -1,6 +1,7 @@
 package eu.evensson.optpartsim;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -30,7 +31,7 @@ public class ArgumentParserTest {
 			"      Default: 0\n" +
 			"    -v\n" +
 			"      Max initial velocity\n" +
-			"      Default: 0.0\n";
+			"      Default: 1.0\n";
 
 	Printer printer = mock(Printer.class);
 
@@ -99,5 +100,15 @@ public class ArgumentParserTest {
 		final Arguments arguments = argumentParser.parse(args);
 
 		assertThat(arguments.maxInitialVelocity(), is(maxInitialVelocity));
+	}
+
+	@DisplayName("has default max initial velocity greater than zero")
+	@Test
+	void hasDefaultMaxInitialVelocityGreaterThanZero() {
+		final String[] args = new String[0];
+
+		final Arguments arguments = argumentParser.parse(args);
+
+		assertThat(arguments.maxInitialVelocity(), is(greaterThan(0.0)));
 	}
 }
