@@ -7,14 +7,22 @@ public class Arguments {
 	@Parameter(names = {"-p" }, description = "Number of parameters")
 	private long particles;
 
+	@Parameter(names = {"-w" }, description = "Width of bounding box")
+	private double boxWidth = 10.0;
+
 	@Parameter(names = {"-v" }, description = "Max initial velocity")
 	private double maxInitialVelocity = 1.0;
 
 	@Parameter(names = {"-d" }, description = "Simulation duration")
 	private double simulationDuration;
 
+
 	public long particles() {
 		return particles;
+	}
+
+	public double boxWidth() {
+		return boxWidth;
 	}
 
 	public double maxInitialVelocity() {

@@ -53,6 +53,9 @@ public class AcceptanceTest {
 				"    -v\n" +
 				"      Max initial velocity\n" +
 				"      Default: 1.0\n" +
+				"    -w\n" +
+				"      Width of bounding box\n" +
+				"      Default: 10.0\n" +
 				"\n";
 
 		@DisplayName("on '-h'")
@@ -140,6 +143,29 @@ public class AcceptanceTest {
 				assertThat(systemOut.toString(),
 						is(String.format(SIMULATION_RESULT_FORMAT, 0.0)));
 			}
+		}
+
+		@DisplayName("prints particle momentum on one bounce")
+		@Test
+		void prints0MomentumOnZeroMaxInitialVelocity() {
+			final double mass = 1.0;
+			final double velocity = 3.0;
+			final double width = 10.0;
+			final double bounceTime = (width / 2.0) / velocity;
+			final String[] args = new String[] {
+					"-p", "1",
+					"-d", Double.toString(bounceTime),
+					"-v", Double.toString(velocity),
+					"-w", Double.toString(width)
+			};
+
+			// TODO: Mock generated particle to always have max velocity
+
+			Main.main(args);
+
+			final double momentum = mass * velocity;
+			assertThat(systemOut.toString(),
+					is(String.format(SIMULATION_RESULT_FORMAT, momentum)));
 		}
 	}
 }

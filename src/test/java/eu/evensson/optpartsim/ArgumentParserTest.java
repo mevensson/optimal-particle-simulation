@@ -31,7 +31,10 @@ public class ArgumentParserTest {
 			"      Default: 0\n" +
 			"    -v\n" +
 			"      Max initial velocity\n" +
-			"      Default: 1.0\n";
+			"      Default: 1.0\n" +
+			"    -w\n" +
+			"      Width of bounding box\n" +
+			"      Default: 10.0\n";
 
 	Printer printer = mock(Printer.class);
 
@@ -105,6 +108,31 @@ public class ArgumentParserTest {
 	@DisplayName("has default max initial velocity greater than zero")
 	@Test
 	void hasDefaultMaxInitialVelocityGreaterThanZero() {
+		final String[] args = new String[0];
+
+		final Arguments arguments = argumentParser.parse(args);
+
+		assertThat(arguments.maxInitialVelocity(), is(greaterThan(0.0)));
+	}
+
+	@DisplayName("parses box width")
+	@ParameterizedTest
+	@ValueSource(doubles = { -Double.MAX_VALUE, -Double.MIN_VALUE, 0.0,
+			Double.MIN_VALUE, Double.MAX_VALUE })
+	void parsesBoxWidth(final double boxWidth) {
+		final String[] args = new String[] {
+				"-w",
+				Double.toString(boxWidth)
+		};
+
+		final Arguments arguments = argumentParser.parse(args);
+
+		assertThat(arguments.boxWidth(), is(boxWidth));
+	}
+
+	@DisplayName("has default box width greater than zero")
+	@Test
+	void hasDefaultBoxWidthGreaterThanZero() {
 		final String[] args = new String[0];
 
 		final Arguments arguments = argumentParser.parse(args);
