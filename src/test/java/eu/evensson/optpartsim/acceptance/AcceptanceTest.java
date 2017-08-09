@@ -44,6 +44,9 @@ public class AcceptanceTest {
 				"  Options:\n" +
 				"    -h, --help\n" +
 				"      Display this help and exit\n" +
+				"    -d\n" +
+				"      Simulation duration\n" +
+				"      Default: 0.0\n" +
 				"    -p\n" +
 				"      Number of parameters\n" +
 				"      Default: 0\n" +
@@ -117,6 +120,17 @@ public class AcceptanceTest {
 			@Test
 			void prints0MomentumOnDefaultTimeArguemnt() {
 				final String[] args = new String[] { "-p", "1" };
+
+				Main.main(args);
+
+				assertThat(systemOut.toString(),
+						is(String.format(SIMULATION_RESULT_FORMAT, 0.0)));
+			}
+
+			@DisplayName("prints 0 momentum on 0.0 duration argument")
+			@Test
+			void prints0MomentumOnZeroDurationArguemnt() {
+				final String[] args = new String[] { "-p", "1", "-d", "0.0" };
 
 				Main.main(args);
 

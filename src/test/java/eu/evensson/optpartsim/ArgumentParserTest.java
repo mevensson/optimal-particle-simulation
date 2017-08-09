@@ -22,6 +22,9 @@ public class ArgumentParserTest {
 			"  Options:\n" +
 			"    -h, --help\n" +
 			"      Display this help and exit\n" +
+			"    -d\n" +
+			"      Simulation duration\n" +
+			"      Default: 0.0\n" +
 			"    -p\n" +
 			"      Number of parameters\n" +
 			"      Default: 0\n";
@@ -63,5 +66,19 @@ public class ArgumentParserTest {
 		final Arguments arguments = argumentParser.parse(args);
 
 		assertThat(arguments.particles(), is(numParticles));
+	}
+
+	@DisplayName("parses simulation duration")
+	@ParameterizedTest
+	@ValueSource(doubles = { 0.0 })
+	void parsesSimulationTime(final double simulationDuration) {
+		final String[] args = new String[] {
+				"-d",
+				Double.toString(simulationDuration)
+		};
+
+		final Arguments arguments = argumentParser.parse(args);
+
+		assertThat(arguments.simulationDuration(), is(simulationDuration));
 	}
 }
