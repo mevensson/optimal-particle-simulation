@@ -1,5 +1,6 @@
 package eu.evensson.optpartsim;
 
+import static eu.evensson.optpartsim.Vector.vector;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -54,8 +55,8 @@ public class OldSimulationTest {
 	@Nested
 	class WithAParticle {
 
-		final Vector POSITION_ONE = new Vector(STRUCTURE_X, STRUCTURE_Y);
-		final Vector VELOCITY_ONE = new Vector(0, 0);
+		final Vector POSITION_ONE = vector(STRUCTURE_X, STRUCTURE_Y);
+		final Vector VELOCITY_ONE = vector(0, 0);
 		final Particle PARTICLE_ONE = new Particle(0, 0, POSITION_ONE,
 				VELOCITY_ONE);
 
@@ -83,10 +84,10 @@ public class OldSimulationTest {
 		static final double SPEED = 1.0;
 		static final double TIME = 12.3;
 
-		final Vector POSITION = new Vector(
+		final Vector POSITION = vector(
 				STRUCTURE_X + (CELL_POSITION + 0.5) * CELL_WIDTH,
 				STRUCTURE_Y + 0.1);
-		final Vector VELOCITY = new Vector(-SPEED, 0.0);
+		final Vector VELOCITY = vector(-SPEED, 0.0);
 		final Particle PARTICLE = new Particle(0, TIME, POSITION, VELOCITY);
 
 		@BeforeEach

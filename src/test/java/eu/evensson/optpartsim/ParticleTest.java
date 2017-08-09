@@ -1,5 +1,6 @@
 package eu.evensson.optpartsim;
 
+import static eu.evensson.optpartsim.Vector.vector;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -16,8 +17,8 @@ public class ParticleTest {
 
 	static final long ID = 12;
 	static final double TIME = 1.3;
-	static final Vector POSITION = new Vector(10.0, 10.0);
-	static final Vector VELOCITY = new Vector(20.0, 20.0);
+	static final Vector POSITION = vector(10.0, 10.0);
+	static final Vector VELOCITY = vector(20.0, 20.0);
 
 	Particle aParticle;
 
@@ -111,7 +112,7 @@ public class ParticleTest {
 		@DisplayName("to the left")
 		@Test
 		void toTheLeft() {
-			final Vector velocity = new Vector(-SPEED, SPEED / 2);
+			final Vector velocity = vector(-SPEED, SPEED / 2);
 			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
 			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
 			assertThat(particle.intersects(BOX), is(intersectionTime));
@@ -120,7 +121,7 @@ public class ParticleTest {
 		@DisplayName("to the right")
 		@Test
 		void toTheRight() {
-			final Vector velocity = new Vector(SPEED, SPEED / 2);
+			final Vector velocity = vector(SPEED, SPEED / 2);
 			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
 			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
 			assertThat(particle.intersects(BOX), is(intersectionTime));
@@ -129,7 +130,7 @@ public class ParticleTest {
 		@DisplayName("to the top")
 		@Test
 		void toTheTop() {
-			final Vector velocity = new Vector(SPEED / 2, -SPEED);
+			final Vector velocity = vector(SPEED / 2, -SPEED);
 			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
 			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
 			assertThat(particle.intersects(BOX), is(intersectionTime));
@@ -138,7 +139,7 @@ public class ParticleTest {
 		@DisplayName("to the bottom")
 		@Test
 		void toTheBottom() {
-			final Vector velocity = new Vector(SPEED / 2, SPEED);
+			final Vector velocity = vector(SPEED / 2, SPEED);
 			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
 			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
 			assertThat(particle.intersects(BOX), is(intersectionTime));

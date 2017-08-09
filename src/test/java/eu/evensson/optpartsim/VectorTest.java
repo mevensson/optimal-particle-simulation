@@ -1,5 +1,6 @@
 package eu.evensson.optpartsim;
 
+import static eu.evensson.optpartsim.Vector.vector;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -21,7 +22,7 @@ public class VectorTest {
 
 	@BeforeEach
 	void createVector() {
-		aVector = new Vector(X, Y);
+		aVector = vector(X, Y);
 	}
 
 	@DisplayName("has an x value")
@@ -48,20 +49,20 @@ public class VectorTest {
 
 		@BeforeEach
 		void addWithOtherVector() {
-			otherVector = new Vector(OTHER_X, OTHER_Y);
+			otherVector = vector(OTHER_X, OTHER_Y);
 			addedVector = aVector.add(otherVector);
 		}
 
 		@DisplayName("is not modified")
 		@Test
 		void isNotModified() {
-			assertThat(aVector, is(new Vector(X, Y)));
+			assertThat(aVector, is(vector(X, Y)));
 		}
 
 		@DisplayName("does not modify the other vector")
 		@Test
 		void doesNotModifyOtherVector() {
-			assertThat(otherVector, is(new Vector(OTHER_X, OTHER_Y)));
+			assertThat(otherVector, is(vector(OTHER_X, OTHER_Y)));
 		}
 
 		@DisplayName("returns a vector with")
@@ -98,7 +99,7 @@ public class VectorTest {
 		@DisplayName("is not modified")
 		@Test
 		void isNotModified() {
-			assertThat(aVector, is(new Vector(X, Y)));
+			assertThat(aVector, is(vector(X, Y)));
 		}
 
 

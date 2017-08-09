@@ -1,5 +1,6 @@
 package eu.evensson.optpartsim;
 
+import static eu.evensson.optpartsim.Vector.vector;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +35,7 @@ public class CellStructureTest {
 	@DisplayName("throws ParticleNotFoundException when particle is removed")
 	@Test
 	void throwsParticleNotFoundExceptionWhenParticleRemoved() {
-		final Vector position = new Vector(STRUCTURE_X, STRUCTURE_Y);
+		final Vector position = vector(STRUCTURE_X, STRUCTURE_Y);
 		final Particle aParticle = new Particle(0, 0, position, null);
 		assertThrows(ParticleNotFoundException.class,
 				() -> aCellStructure.remove(aParticle));
@@ -51,7 +52,7 @@ public class CellStructureTest {
 
 		@BeforeEach
 		void insertParticle() {
-			final Vector position = new Vector(PARTICLE_X, PARTICLE_Y);
+			final Vector position = vector(PARTICLE_X, PARTICLE_Y);
 			aParticle = new Particle(0, 0, position, null);
 			aCellStructure.insert(aParticle);
 		}
@@ -76,7 +77,7 @@ public class CellStructureTest {
 				+ "when other particle is removed")
 		@Test
 		void throwsParticleNotFoundExceptionWhenOtherParticleRemoved() {
-			final Vector position = new Vector(STRUCTURE_X, STRUCTURE_Y);
+			final Vector position = vector(STRUCTURE_X, STRUCTURE_Y);
 			final Particle otherParticle = new Particle(1, 0, position, null);
 			assertThrows(ParticleNotFoundException.class,
 					() -> aCellStructure.remove(otherParticle));
@@ -95,7 +96,7 @@ public class CellStructureTest {
 
 			@BeforeEach
 			void insertSecondParticle() {
-				final Vector position = new Vector(OTHER_PARTICLE_X, OTHER_PARTICLE_Y);
+				final Vector position = vector(OTHER_PARTICLE_X, OTHER_PARTICLE_Y);
 				secondParticle = new Particle(0, 0, position, null);
 				aCellStructure.insert(secondParticle);
 			}

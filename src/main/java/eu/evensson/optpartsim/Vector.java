@@ -2,10 +2,14 @@ package eu.evensson.optpartsim;
 
 public class Vector {
 
+	public static Vector vector(final double x, final double y) {
+		return new Vector(x, y);
+	}
+
 	private final double x;
 	private final double y;
 
-	public Vector(final double x, final double y) {
+	private Vector(final double x, final double y) {
 		this.x = x;
 		this.y = y;
 	}
