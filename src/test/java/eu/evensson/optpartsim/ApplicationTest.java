@@ -1,10 +1,16 @@
 package eu.evensson.optpartsim;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -55,7 +61,7 @@ public class ApplicationTest {
 
 		application.run(ARGS);
 
-		verify(simulation, never()).simulate();
+		verify(simulation, never()).simulate(any());
 	}
 
 	@DisplayName("generates particles")
@@ -80,11 +86,24 @@ public class ApplicationTest {
 				numParticles, boxHeight, boxWidth, maxInitialVelocity);
 	}
 
+	@DisplayName("simulates with the particle list")
+	@Test
+	void simulatesWithParticleList() {
+		when(argumentParser.parse(ARGS)).thenReturn(new Arguments());
+		final List<Particle> particleList = new ArrayList<>();
+		when(particleGenerator.generate(anyLong(), anyDouble(), anyDouble(), anyDouble()))
+				.thenReturn(particleList);
+
+		application.run(ARGS);
+
+		verify(simulation).simulate(same(particleList));
+	}
+
 	@DisplayName("prints simulation result")
 	@Test
 	void printsSimulationResult() {
 		when(argumentParser.parse(ARGS)).thenReturn(new Arguments());
-		when(simulation.simulate()).thenReturn(SIMULATION_RESULT);
+		when(simulation.simulate(any())).thenReturn(SIMULATION_RESULT);
 
 		application.run(ARGS);
 

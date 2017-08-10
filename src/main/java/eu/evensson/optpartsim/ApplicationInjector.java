@@ -1,5 +1,6 @@
 package eu.evensson.optpartsim;
 
+import java.util.List;
 import java.util.Random;
 
 public class ApplicationInjector {
@@ -24,7 +25,7 @@ public class ApplicationInjector {
 	private static Simulation injectSimulation() {
 		return new Simulation() {
 			@Override
-			public double simulate() {
+			public double simulate(final List<Particle> list) {
 				return 0;
 			}
 		};

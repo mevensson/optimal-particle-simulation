@@ -1,5 +1,7 @@
 package eu.evensson.optpartsim;
 
+import java.util.List;
+
 public class Application {
 
 	private static final String SIMULATION_RESULT =
@@ -26,13 +28,13 @@ public class Application {
 			return;
 		}
 
-		particleGenerator.generate(
+		final List<Particle> particleList = particleGenerator.generate(
 				arguments.particles(),
 				arguments.boxHeight(),
 				arguments.boxWidth(),
 				arguments.maxInitialVelocity());
 
-		final double result = simulation.simulate();
+		final double result = simulation.simulate(particleList);
 
 		printer.print(String.format(SIMULATION_RESULT, result));
 	}
