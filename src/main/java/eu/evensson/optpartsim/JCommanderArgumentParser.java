@@ -7,7 +7,7 @@ public class JCommanderArgumentParser implements ArgumentParser {
 
 	private final Printer printer;
 
-	@Parameter(names = {"-h", "--help" }, description="Display this help and exit", help = true)
+	@Parameter(names = {"--help" }, description="Display this help and exit", help = true)
 	private boolean help;
 
 	public JCommanderArgumentParser(final Printer printer) {

@@ -21,11 +21,14 @@ public class ArgumentParserTest {
 	private static final String HELP_MESSAGE =
 			"Usage: optimal-particle-simulation [options]\n" +
 			"  Options:\n" +
-			"    -h, --help\n" +
+			"    --help\n" +
 			"      Display this help and exit\n" +
 			"    -d\n" +
 			"      Simulation duration\n" +
 			"      Default: 0.0\n" +
+			"    -h\n" +
+			"      Height of bounding box\n" +
+			"      Default: 10.0\n" +
 			"    -p\n" +
 			"      Number of parameters\n" +
 			"      Default: 0\n" +
@@ -45,17 +48,9 @@ public class ArgumentParserTest {
 		argumentParser = new JCommanderArgumentParser(printer);
 	}
 
-	@DisplayName("prints help on -h")
-	@Test
-	void printsHelpShortOption() {
-		argumentParser.parse(new String[]{ "-h" });
-
-		verify(printer).print(HELP_MESSAGE);
-	}
-
 	@DisplayName("prints help on --help")
 	@Test
-	void printsHelpLongOption() {
+	void printsHelp() {
 		argumentParser.parse(new String[]{ "--help" });
 
 		verify(printer).print(HELP_MESSAGE);
@@ -115,6 +110,31 @@ public class ArgumentParserTest {
 		assertThat(arguments.maxInitialVelocity(), is(greaterThan(0.0)));
 	}
 
+	@DisplayName("parses box height")
+	@ParameterizedTest
+	@ValueSource(doubles = { -Double.MAX_VALUE, -Double.MIN_VALUE, 0.0,
+			Double.MIN_VALUE, Double.MAX_VALUE })
+	void parsesBoxHeight(final double boxHeight) {
+		final String[] args = new String[] {
+				"-h",
+				Double.toString(boxHeight)
+		};
+
+		final Arguments arguments = argumentParser.parse(args);
+
+		assertThat(arguments.boxHeight(), is(boxHeight));
+	}
+
+	@DisplayName("has default box height greater than zero")
+	@Test
+	void hasDefaultBoxHeightGreaterThanZero() {
+		final String[] args = new String[0];
+
+		final Arguments arguments = argumentParser.parse(args);
+
+		assertThat(arguments.boxHeight(), is(greaterThan(0.0)));
+	}
+
 	@DisplayName("parses box width")
 	@ParameterizedTest
 	@ValueSource(doubles = { -Double.MAX_VALUE, -Double.MIN_VALUE, 0.0,
@@ -137,6 +157,6 @@ public class ArgumentParserTest {
 
 		final Arguments arguments = argumentParser.parse(args);
 
-		assertThat(arguments.maxInitialVelocity(), is(greaterThan(0.0)));
+		assertThat(arguments.boxWidth(), is(greaterThan(0.0)));
 	}
 }

@@ -42,11 +42,14 @@ public class AcceptanceTest {
 		private static final String HELP_MESSAGE =
 				"Usage: optimal-particle-simulation [options]\n" +
 				"  Options:\n" +
-				"    -h, --help\n" +
+				"    --help\n" +
 				"      Display this help and exit\n" +
 				"    -d\n" +
 				"      Simulation duration\n" +
 				"      Default: 0.0\n" +
+				"    -h\n" +
+				"      Height of bounding box\n" +
+				"      Default: 10.0\n" +
 				"    -p\n" +
 				"      Number of parameters\n" +
 				"      Default: 0\n" +
@@ -58,20 +61,10 @@ public class AcceptanceTest {
 				"      Default: 10.0\n" +
 				"\n";
 
-		@DisplayName("on '-h'")
-		@Test
-		void printsHelpShortOption() {
-			final String[] args = new String[] { "-h" };
-
-			Main.main(args);
-
-			assertThat(systemOut.toString(), is(HELP_MESSAGE));
-		}
-
 		@DisplayName("on '--help'")
 		@Test
 		void printsHelpLongOption() {
-			final String[] args = new String[] { "-h" };
+			final String[] args = new String[] { "--help" };
 
 			Main.main(args);
 

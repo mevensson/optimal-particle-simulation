@@ -7,6 +7,9 @@ public class Arguments {
 	@Parameter(names = {"-p" }, description = "Number of parameters")
 	private long particles;
 
+	@Parameter(names = {"-h" }, description = "Height of bounding box")
+	private double boxHeight = 10.0;
+
 	@Parameter(names = {"-w" }, description = "Width of bounding box")
 	private double boxWidth = 10.0;
 
@@ -16,9 +19,12 @@ public class Arguments {
 	@Parameter(names = {"-d" }, description = "Simulation duration")
 	private double simulationDuration;
 
-
 	public long particles() {
 		return particles;
+	}
+
+	public double boxHeight() {
+		return boxHeight;
 	}
 
 	public double boxWidth() {
