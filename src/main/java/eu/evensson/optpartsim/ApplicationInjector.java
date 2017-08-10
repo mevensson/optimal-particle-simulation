@@ -1,6 +1,5 @@
 package eu.evensson.optpartsim;
 
-import java.util.List;
 import java.util.Random;
 
 public class ApplicationInjector {
@@ -22,21 +21,24 @@ public class ApplicationInjector {
 		return new RandomParticleGenerator(injectRandom());
 	}
 
-	private static Simulation injectSimulation() {
-		return new Simulation() {
-			@Override
-			public double simulate(final List<Particle> list) {
-				return 0;
-			}
-		};
-	}
-
 	private static Random injectRandom() {
 		return new Random(injectSeed());
 	}
 
 	private static long injectSeed() {
 		return 0;
+	}
+
+	private static Simulation injectSimulation() {
+		return new DefaultSimulation(injectCellStructure(), injectEventQueue());
+	}
+
+	private static CellStructure injectCellStructure() {
+		return null;
+	}
+
+	private static EventQueue injectEventQueue() {
+		return new EventQueue();
 	}
 
 }

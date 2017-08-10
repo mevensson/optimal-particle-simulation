@@ -2,17 +2,18 @@ package eu.evensson.optpartsim;
 
 import java.util.List;
 
-public class OldSimulation {
+public class DefaultSimulation implements Simulation {
 
 	private final CellStructure cellStructure;
 	private final EventQueue eventQueue;
 
-	public OldSimulation(final CellStructure cellStructure,
+	public DefaultSimulation(final CellStructure cellStructure,
 			final EventQueue eventQueue) {
 		this.cellStructure = cellStructure;
 		this.eventQueue = eventQueue;
 	}
 
+	@Override
 	public double simulate(final List<Particle> particles) {
 		for (final Particle particle : particles) {
 			final Box box = cellStructure.insert(particle);
