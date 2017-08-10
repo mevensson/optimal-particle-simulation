@@ -28,6 +28,7 @@ public class Application {
 
 		particleGenerator.generate(
 				arguments.particles(),
+				arguments.boxHeight(),
 				arguments.boxWidth(),
 				arguments.maxInitialVelocity());
 

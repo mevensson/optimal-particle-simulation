@@ -41,31 +41,35 @@ public class ParticleGeneratorTest {
 	@DisplayName("returns empty list when num particles is zero")
 	@Test
 	void returnsEmptyListWhenNumParticlesIsZero() {
-		final List<Particle> particleList = particleGenerator.generate(0, 0.0, 0.0);
+		final List<Particle> particleList = particleGenerator.generate(0, 0.0, 0.0, 0.0);
 
 		assertThat(particleList, is(empty()));
 	}
 
 	@DisplayName("returns list with particles")
 	@ParameterizedTest
-	@CsvSource({ "1, 5.0, 10.0", "2, 10.0, 20.0" })
-	void returnsListWithParticles(final int numParticles, final double boxWidth,
+	@CsvSource({ "1, 5.0, 10.0, 20.0", "2, 10.0, 20.0, 40.0" })
+	void returnsListWithParticles(final int numParticles,
+			final double boxHeight, final double boxWidth,
 			final double maxVelocity) {
 		final double[] expectedXPositions =
 				stubRandomDoubleStream(numParticles, 0.0, boxWidth);
+		final double[] expectedYPositions =
+				stubRandomDoubleStream(numParticles, 0.0, boxHeight);
 		final double[] expectedAbsVelocities =
 				stubRandomDoubleStream(numParticles, 0.0, maxVelocity);
 		final double[] expectedAngles =
 				stubRandomDoubleStream(numParticles, 0.0, PI);
 
 		final List<Particle> particleList =
-				particleGenerator.generate(numParticles, boxWidth, maxVelocity);
+				particleGenerator.generate(numParticles, boxHeight, boxWidth, maxVelocity);
 
 		assertThat(particleList, hasSize(numParticles));
 		int index = 0;
 		for (final Particle actualParticle : particleList) {
 			assertThat(actualParticle, is(notNullValue()));
-			final Vector position = vector(expectedXPositions[index], 0.0);
+			final Vector position =
+					vector(expectedXPositions[index], expectedYPositions[index]);
 			final Vector velocity =
 					polar(expectedAbsVelocities[index], expectedAngles[index]);
 			final Particle expectedParticle =

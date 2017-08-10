@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ParticleGenerator {
 
-	List<Particle> generate(long numParticles, double boxWidth,
-			double maxInitialVelocity);
+	List<Particle> generate(long numParticles,
+			double boxHeight, double boxWidth, double maxInitialVelocity);
 
 }

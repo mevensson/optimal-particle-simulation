@@ -7,6 +7,7 @@ import static java.lang.Math.PI;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PrimitiveIterator.OfDouble;
 import java.util.Random;
 
 public class RandomParticleGenerator implements ParticleGenerator {
@@ -21,22 +22,30 @@ public class RandomParticleGenerator implements ParticleGenerator {
 
 	@Override
 	public List<Particle> generate(final long numParticles,
+			final double boxHeight,
 			final double boxWidth,
 			final double maxInitialVelocity) {
 		final Iterator<Double> xPositions =
-				random.doubles(numParticles, 0.0, boxWidth).iterator();
+				randomNumbers(numParticles, 0.0, boxWidth);
+		final Iterator<Double> yPositions =
+				randomNumbers(numParticles, 0.0, boxHeight);
 		final Iterator<Double> absVelocities =
-				random.doubles(numParticles, 0.0, maxInitialVelocity).iterator();
+				randomNumbers(numParticles, 0.0, maxInitialVelocity);
 		final Iterator<Double> angles =
-				random.doubles(numParticles, 0.0, PI).iterator();
+				randomNumbers(numParticles, 0.0, PI);
 
 		final List<Particle> particleList = new LinkedList<>();
 		for (long index = 1; index <= numParticles; index++) {
 			particleList.add(new Particle(index, START_TIME,
-					vector(xPositions.next(), 0.0),
+					vector(xPositions.next(), yPositions.next()),
 					polar(absVelocities.next(), angles.next())));
 		}
 		return particleList;
+	}
+
+	private OfDouble randomNumbers(final long numValues,
+			final double minValue, final double maxValue) {
+		return random.doubles(numValues, minValue, maxValue).iterator();
 	}
 
 }
