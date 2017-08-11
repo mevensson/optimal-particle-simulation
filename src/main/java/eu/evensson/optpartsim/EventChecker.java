@@ -11,7 +11,8 @@ public class EventChecker {
 	public Event check(final Particle particle) {
 		final Box walls = cellStructure.getWalls();
 		final double distance = particle.position().x() - walls.x();
-		return new WallBounceEvent(distance / -particle.velocity().x());
+		return new WallBounceEvent(
+				distance / -particle.velocity().x(), particle);
 	}
 
 }

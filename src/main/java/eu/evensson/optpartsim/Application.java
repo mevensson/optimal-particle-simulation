@@ -34,7 +34,8 @@ public class Application {
 				arguments.boxWidth(),
 				arguments.maxInitialVelocity());
 
-		final double result = simulation.simulate(particleList);
+		final double result = simulation.simulate(
+				particleList, arguments.simulationDuration());
 
 		printer.print(String.format(SIMULATION_RESULT, result));
 	}

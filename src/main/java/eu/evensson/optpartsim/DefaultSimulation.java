@@ -2,7 +2,11 @@ package eu.evensson.optpartsim;
 
 import java.util.List;
 
+import eu.evensson.optpartsim.EventQueue.EventQueueEmptyException;
+
 public class DefaultSimulation implements Simulation {
+
+	private static final double MASS = 1.0;
 
 	private final CellStructure cellStructure;
 	private final EventQueue eventQueue;
@@ -16,13 +20,27 @@ public class DefaultSimulation implements Simulation {
 	}
 
 	@Override
-	public double simulate(final List<Particle> particles) {
+	public double simulate(final List<Particle> particles, final double duration) {
 		for (final Particle particle : particles) {
 			cellStructure.insert(particle);
 			eventQueue.add(eventChecker.check(particle));
 		}
 
-		return 0.0;
+		double totalMomentum = 0.0;
+		try {
+			while (eventQueue.peek().time() <= duration) {
+				final Event event = eventQueue.removeFirst();
+				if (event instanceof WallBounceEvent) {
+					final WallBounceEvent wallBounceEvent = (WallBounceEvent) event;
+					final double speed = -wallBounceEvent.particle().velocity()
+							.x();
+					totalMomentum += speed * MASS;
+				}
+			}
+		} catch (final EventQueueEmptyException e) {
+		}
+
+		return totalMomentum;
 	}
 
 }

@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface Simulation {
 
-	double simulate(List<Particle> list);
+	double simulate(List<Particle> list, double duration);
 
 }

@@ -42,7 +42,7 @@ public class EventCheckerTest {
 		final Event event = anEventChecker.check(particle);
 
 		final WallBounceEvent expectedEvent =
-				new WallBounceEvent((CENTER.x() - WALLS.x()) / speed);
+				new WallBounceEvent((CENTER.x() - WALLS.x()) / speed, particle);
 		assertThat(event, is(expectedEvent));
 	}
 }

@@ -3,6 +3,7 @@ package eu.evensson.optpartsim;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -35,6 +36,7 @@ public class ApplicationTest {
 	ArgumentParser argumentParser = mock(ArgumentParser.class);
 	ParticleGenerator particleGenerator = mock(ParticleGenerator.class);
 	Simulation simulation = mock(Simulation.class);
+	Arguments arguments = mock(Arguments.class);
 
 	Application application;
 
@@ -44,11 +46,14 @@ public class ApplicationTest {
 				particleGenerator, simulation);
 	}
 
+	@BeforeEach
+	void mockArguments() {
+		when(argumentParser.parse(ARGS)).thenReturn(arguments);
+	}
+
 	@DisplayName("parses arguments")
 	@Test
 	void parsesArguments() {
-		when(argumentParser.parse(ARGS)).thenReturn(new Arguments());
-
 		application.run(ARGS);
 
 		verify(argumentParser).parse(same(ARGS));
@@ -61,7 +66,7 @@ public class ApplicationTest {
 
 		application.run(ARGS);
 
-		verify(simulation, never()).simulate(any());
+		verify(simulation, never()).simulate(any(), anyDouble());
 	}
 
 	@DisplayName("generates particles")
@@ -76,9 +81,9 @@ public class ApplicationTest {
 				"-w", Double.toString(boxWidth)
 		};
 		final JCommanderArgumentParser realArgumentParser = new JCommanderArgumentParser(printer);
-		final Arguments arguments = realArgumentParser.parse(args);
+		final Arguments realArguments = realArgumentParser.parse(args);
 
-		when(argumentParser.parse(args)).thenReturn(arguments);
+		when(argumentParser.parse(args)).thenReturn(realArguments);
 
 		application.run(args);
 
@@ -86,24 +91,25 @@ public class ApplicationTest {
 				numParticles, boxHeight, boxWidth, maxInitialVelocity);
 	}
 
-	@DisplayName("simulates with the particle list")
+	@DisplayName("simulates with the particle list and simulation duration")
 	@Test
-	void simulatesWithParticleList() {
-		when(argumentParser.parse(ARGS)).thenReturn(new Arguments());
+	void simulatesWithParticleListAndDuration() {
 		final List<Particle> particleList = new ArrayList<>();
 		when(particleGenerator.generate(anyLong(), anyDouble(), anyDouble(), anyDouble()))
 				.thenReturn(particleList);
 
+		final double duration = 12.34;
+		when(arguments.simulationDuration()).thenReturn(duration);
+
 		application.run(ARGS);
 
-		verify(simulation).simulate(same(particleList));
+		verify(simulation).simulate(same(particleList), eq(duration));
 	}
 
 	@DisplayName("prints simulation result")
 	@Test
 	void printsSimulationResult() {
-		when(argumentParser.parse(ARGS)).thenReturn(new Arguments());
-		when(simulation.simulate(any())).thenReturn(SIMULATION_RESULT);
+		when(simulation.simulate(any(), anyDouble())).thenReturn(SIMULATION_RESULT);
 
 		application.run(ARGS);
 
