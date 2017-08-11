@@ -59,7 +59,7 @@ public class ParticleGeneratorTest {
 		final double[] expectedAbsVelocities =
 				stubRandomDoubleStream(numParticles, 0.0, maxVelocity);
 		final double[] expectedAngles =
-				stubRandomDoubleStream(numParticles, 0.0, PI);
+				stubRandomDoubleStream(numParticles, 0.0, 2.0 * PI);
 
 		final List<Particle> particleList =
 				particleGenerator.generate(numParticles, boxHeight, boxWidth, maxVelocity);

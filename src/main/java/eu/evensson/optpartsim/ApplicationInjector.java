@@ -4,6 +4,12 @@ import java.util.Random;
 
 public class ApplicationInjector {
 
+	private static Random random = null;
+
+	public static void setRandom(final Random random) {
+		ApplicationInjector.random = random;
+	}
+
 	public static Application injectApplication(final ApplicationScope scope) {
 		return new Application(injectPrinter(), injectArgumentParser(),
 				injectParticleGenerator(), injectSimulation());
@@ -22,6 +28,10 @@ public class ApplicationInjector {
 	}
 
 	private static Random injectRandom() {
+		if (random != null) {
+			return random;
+		}
+
 		return new Random(injectSeed());
 	}
 

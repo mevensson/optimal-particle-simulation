@@ -12,6 +12,7 @@ import java.util.Random;
 
 public class RandomParticleGenerator implements ParticleGenerator {
 
+	private static final double MAX_ANGLE = 2.0 * PI;
 	private static final double START_TIME = 0.0;
 
 	private final Random random;
@@ -32,7 +33,7 @@ public class RandomParticleGenerator implements ParticleGenerator {
 		final Iterator<Double> absVelocities =
 				randomNumbers(numParticles, 0.0, maxInitialVelocity);
 		final Iterator<Double> angles =
-				randomNumbers(numParticles, 0.0, PI);
+				randomNumbers(numParticles, 0.0, MAX_ANGLE);
 
 		final List<Particle> particleList = new LinkedList<>();
 		for (long index = 1; index <= numParticles; index++) {
