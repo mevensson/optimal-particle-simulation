@@ -6,7 +6,7 @@ public class ApplicationInjector {
 
 	public static Application injectApplication(final ApplicationScope scope) {
 		return new Application(injectPrinter(), injectArgumentParser(),
-				injectParitcleGenerator(), injectSimulation());
+				injectParticleGenerator(), injectSimulation());
 	}
 
 	private static Printer injectPrinter() {
@@ -17,7 +17,7 @@ public class ApplicationInjector {
 		return new JCommanderArgumentParser(injectPrinter());
 	}
 
-	private static ParticleGenerator injectParitcleGenerator() {
+	private static ParticleGenerator injectParticleGenerator() {
 		return new RandomParticleGenerator(injectRandom());
 	}
 
@@ -30,15 +30,24 @@ public class ApplicationInjector {
 	}
 
 	private static Simulation injectSimulation() {
-		return new DefaultSimulation(injectCellStructure(), injectEventQueue());
+		return new DefaultSimulation(injectCellStructure(), injectEventQueue(),
+				injectEventChecker());
 	}
 
 	private static CellStructure injectCellStructure() {
-		return null;
+		return new CellStructure(injectWalls(), 1, 1);
+	}
+
+	private static Box injectWalls() {
+		return new Box(0.0, 0.0, 10.0, 10.0);
 	}
 
 	private static EventQueue injectEventQueue() {
 		return new EventQueue();
 	}
 
+
+	private static EventChecker injectEventChecker() {
+		return new EventChecker(injectCellStructure());
+	}
 }

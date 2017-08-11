@@ -3,6 +3,10 @@ package eu.evensson.optpartsim;
 import static eu.evensson.optpartsim.Vector.vector;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +22,12 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitPlatform.class)
 public class DefaultSimulationTest {
 
-	final static double STRUCTURE_X = 10.0;
-	final static double STRUCTURE_Y = 20.0;
-	final static double STRUCTURE_WIDTH = 4.0;
-	final static double STRUCTURE_HEIGHT = 10.0;
-	final static int WIDTH_IN_CELLS = 4;
-	final static int HEIGHT_IN_CELLS = 5;
+	final static Box WALLS = new Box(10.0, 20.0, 4.0, 10.0);
+	static final Event DEFAULT_EVENT = new Event(0.0);
 
-	final CellStructure cellStructure = new CellStructure(new Box(STRUCTURE_X,
-			STRUCTURE_Y, STRUCTURE_WIDTH, STRUCTURE_HEIGHT), WIDTH_IN_CELLS,
-			HEIGHT_IN_CELLS);
-
+	final CellStructure cellStructure = mock(CellStructure.class);
 	final EventQueue eventQueue = new EventQueue();
+	final EventChecker eventChecker = mock(EventChecker.class);
 
 	final List<Particle> particles = new ArrayList<>();
 
@@ -37,7 +35,12 @@ public class DefaultSimulationTest {
 
 	@BeforeEach
 	void createSimulation() {
-		aSimulation = new DefaultSimulation(cellStructure, eventQueue);
+		aSimulation = new DefaultSimulation(cellStructure, eventQueue, eventChecker);
+	}
+
+	@BeforeEach
+	void setDefaultEvent() {
+		when(eventChecker.check(any())).thenReturn(DEFAULT_EVENT);
 	}
 
 	@DisplayName("with no particles")
@@ -55,14 +58,12 @@ public class DefaultSimulationTest {
 	@Nested
 	class WithAParticle {
 
-		final Vector POSITION_ONE = vector(STRUCTURE_X, STRUCTURE_Y);
-		final Vector VELOCITY_ONE = vector(0, 0);
-		final Particle PARTICLE_ONE = new Particle(0, 0, POSITION_ONE,
-				VELOCITY_ONE);
+		final Particle PARTICLE =
+				new Particle(0, 0.0, vector(0.0, 0.0), vector(0.0, 0.0));
 
 		@BeforeEach
 		void addParticle() {
-			particles.add(PARTICLE_ONE);
+			particles.add(PARTICLE);
 		}
 
 		@DisplayName("adds particle to Cell Structure")
@@ -70,38 +71,34 @@ public class DefaultSimulationTest {
 		void addsParticleToCellStructure() {
 			aSimulation.simulate(particles);
 
-			// Should not throw
-			cellStructure.remove(PARTICLE_ONE);
+			verify(cellStructure).insert(PARTICLE);
 		}
 	}
 
-	@DisplayName("with transfer left particle")
+	@DisplayName("with wall bounce left particle")
 	@Nested
-	class WithTransferLeftParticle {
+	class WithWallBounceLeftParticle {
 
-		static final int CELL_POSITION = 1;
-		static final double CELL_WIDTH = STRUCTURE_WIDTH / WIDTH_IN_CELLS;
-		static final double SPEED = 1.0;
-		static final double TIME = 12.3;
-
-		final Vector POSITION = vector(
-				STRUCTURE_X + (CELL_POSITION + 0.5) * CELL_WIDTH,
-				STRUCTURE_Y + 0.1);
-		final Vector VELOCITY = vector(-SPEED, 0.0);
-		final Particle PARTICLE = new Particle(0, TIME, POSITION, VELOCITY);
+		final Event WALL_BOUNCE_EVENT = new WallBounceEvent(0.0);
+		final Particle PARTICLE =
+				new Particle(0, 0.0, vector(0.0, 0.0), vector(0.0, 0.0));
 
 		@BeforeEach
-		void addParticleAndSimulate() {
+		void addParticle() {
 			particles.add(PARTICLE);
-			aSimulation.simulate(particles);
 		}
 
-		@DisplayName("adds Transfer Event to Event Queue")
+		@BeforeEach
+		void setEvent() {
+			when(eventChecker.check(PARTICLE)).thenReturn(WALL_BOUNCE_EVENT);
+		}
+
+		@DisplayName("adds Wall Bounce Event to Event Queue")
 		@Test
-		void addsTransferEventToEventQueue() {
-			final double transferTime = TIME + 0.5 * CELL_WIDTH / SPEED;
-			final TransferEvent transferEvent = new TransferEvent(transferTime, PARTICLE);
-			assertThat(eventQueue.removeFirst(), is(transferEvent));
+		void addsWallBounceEventToEventQueue() {
+			aSimulation.simulate(particles);
+
+			assertThat(eventQueue.removeFirst(), is(WALL_BOUNCE_EVENT));
 		}
 	}
 }
