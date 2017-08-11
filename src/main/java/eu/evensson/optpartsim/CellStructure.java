@@ -30,21 +30,25 @@ public class CellStructure {
 		}
 	}
 
-	private final Box box;
+	private final Box walls;
 	private final Array2D<Cell> cells;
 	private final double cellWidth;
 	private final double cellHeight;
 
-	public CellStructure(final Box box, final int widthInCells,
+	public CellStructure(final Box walls, final int widthInCells,
 			final int heightInCells) {
-		this.box = box;
+		this.walls = walls;
 		cells = new Array2D<>(widthInCells, heightInCells);
-		cellWidth = box.width() / widthInCells;
-		cellHeight = box.height() / heightInCells;
+		cellWidth = walls.width() / widthInCells;
+		cellHeight = walls.height() / heightInCells;
 
 		cells.forEach((x, y) -> {
 			cells.set(x, y, new Cell(cellBox(x, y)));
 		});
+	}
+
+	public Box getWalls() {
+		return walls;
 	}
 
 	public Box insert(final Particle particle) {
@@ -63,7 +67,7 @@ public class CellStructure {
 	}
 
 	private Box cellBox(final Integer x, final Integer y) {
-		return new Box(box.x() + cellWidth * x, box.y() + cellHeight * y,
+		return new Box(walls.x() + cellWidth * x, walls.y() + cellHeight * y,
 				cellWidth, cellHeight);
 	}
 
@@ -74,10 +78,10 @@ public class CellStructure {
 	}
 
 	private int cellColumn(final double x) {
-		return (int) Math.floor((x - box.x()) / cellWidth);
+		return (int) Math.floor((x - walls.x()) / cellWidth);
 	}
 
 	private int cellRow(final double y) {
-		return (int) Math.floor((y - box.y()) / cellHeight);
+		return (int) Math.floor((y - walls.y()) / cellHeight);
 	}
 }
