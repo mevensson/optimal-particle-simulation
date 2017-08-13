@@ -113,6 +113,16 @@ public class DefaultSimulationTest {
 			assertThat(eventQueue.removeFirst(), is(WALL_BOUNCE_EVENT));
 		}
 
+		@DisplayName("does not add momentum for Wall Bounce Event"
+				+ "if simulation duration is less than wall bounce time")
+		@Test
+		void doesNotAddMomentumForWallBounceEvent() {
+			final double momentum = aSimulation.simulate(
+					particles, Math.nextDown(WALL_BOUNCE_TIME));
+
+			assertThat(momentum, is(0.0));
+		}
+
 		@DisplayName("adds momentum for Wall Bounce Event"
 				+ "if simulation duration is at wall bounce time")
 		@Test
