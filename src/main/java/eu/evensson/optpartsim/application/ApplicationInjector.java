@@ -1,5 +1,6 @@
 package eu.evensson.optpartsim.application;
 
+import java.util.Optional;
 import java.util.Random;
 
 import eu.evensson.optpartsim.di.ScopeEntry;
@@ -9,10 +10,10 @@ import eu.evensson.optpartsim.simulation.SimulationScope;
 
 public class ApplicationInjector {
 
-	private static Random random = null;
+	private static Optional<Random> random = Optional.empty();
 
 	public static void setRandom(final Random random) {
-		ApplicationInjector.random = random;
+		ApplicationInjector.random = Optional.ofNullable(random);
 	}
 
 	public static Application injectApplication(final ApplicationScope scope) {
@@ -33,11 +34,7 @@ public class ApplicationInjector {
 	}
 
 	private static Random injectRandom() {
-		if (random != null) {
-			return random;
-		}
-
-		return new Random(injectSeed());
+		return random.orElse(new Random(injectSeed()));
 	}
 
 	private static long injectSeed() {
