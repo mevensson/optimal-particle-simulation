@@ -25,6 +25,7 @@ public class EventCheckerTest {
 	private static final Vector CENTER = vector(
 			(WALLS.x() + WALLS.width()) / 2.0 ,
 			(WALLS.y() + WALLS.height()) / 2.0);
+	private static final double TIME = 100.0;
 
 	private CellStructure cellStructure = mock(CellStructure.class);
 
@@ -41,13 +42,13 @@ public class EventCheckerTest {
 	void returnsWallBounceLeftEvent() {
 		final double speed = 1.0;
 		final Vector velocity = vector(-speed , 0.0);
-		final Particle particle = new Particle(ID, 0.0, CENTER, velocity);
+		final Particle particle = new Particle(ID, TIME, CENTER, velocity);
 
 		final Event event = anEventChecker.check(particle);
 
-		final WallBounceEvent expectedEvent =
-				new WallBounceEvent((CENTER.x() - WALLS.x()) / speed, particle,
-						Particle.Direction.HORIZONTAL);
+		final double timeToWall = (CENTER.x() - WALLS.x()) / speed;
+		final WallBounceEvent expectedEvent = new WallBounceEvent(
+				TIME + timeToWall, particle, Particle.Direction.HORIZONTAL);
 		assertThat(event, is(expectedEvent));
 	}
 
@@ -56,13 +57,13 @@ public class EventCheckerTest {
 	void returnsWallBounceRightEvent() {
 		final double speed = 1.0;
 		final Vector velocity = vector(speed , 0.0);
-		final Particle particle = new Particle(ID, 0.0, CENTER, velocity);
+		final Particle particle = new Particle(ID, TIME, CENTER, velocity);
 
 		final Event event = anEventChecker.check(particle);
 
-		final WallBounceEvent expectedEvent =
-				new WallBounceEvent((CENTER.x() - WALLS.x()) / speed, particle,
-						Particle.Direction.HORIZONTAL);
+		final double timeToWall = (CENTER.x() - WALLS.x()) / speed;
+		final WallBounceEvent expectedEvent = new WallBounceEvent(
+				TIME + timeToWall, particle, Particle.Direction.HORIZONTAL);
 		assertThat(event, is(expectedEvent));
 	}
 }

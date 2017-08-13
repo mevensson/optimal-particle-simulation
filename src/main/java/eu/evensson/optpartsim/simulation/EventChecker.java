@@ -28,9 +28,9 @@ public class EventChecker {
 	private Optional<Double> wallBounceLeftTime(final Particle particle) {
 		final Box walls = cellStructure.getWalls();
 		final double distance = particle.position().x() - walls.x();
-		final double bounceTime = distance / -particle.velocity().x();
-		if (bounceTime > 0) {
-			return Optional.of(bounceTime);
+		final double timeToBounce = distance / -particle.velocity().x();
+		if (timeToBounce > 0) {
+			return Optional.of(timeToBounce + particle.time());
 		}
 
 		return Optional.empty();
@@ -40,6 +40,7 @@ public class EventChecker {
 		final Box walls = cellStructure.getWalls();
 		final double distance =
 				(walls.x() + walls.width()) - particle.position().x();
-		return Optional.of(distance / particle.velocity().x());
+		final double timeToBounce = distance / particle.velocity().x();
+		return Optional.of(timeToBounce + particle.time());
 	}
 }
