@@ -2,8 +2,10 @@ package eu.evensson.optpartsim.application;
 
 import java.util.List;
 
+import eu.evensson.optpartsim.di.ScopeEntry;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.simulation.Simulation;
+import eu.evensson.optpartsim.simulation.SimulationScope;
 
 public class Application {
 
@@ -13,16 +15,16 @@ public class Application {
 	private final Printer printer;
 	private final ArgumentParser argumentParser;
 	private final ParticleGenerator particleGenerator;
-	private final Simulation simulation;
+	private final ScopeEntry<SimulationScope, Simulation> simulationScopeEntry;
 
 	public Application(final Printer printer,
 			final ArgumentParser argumentParser,
 			final ParticleGenerator particleGenerator,
-			final Simulation simulation) {
+			final ScopeEntry<SimulationScope, Simulation> simulationScopeEntry) {
 		this.printer = printer;
 		this.argumentParser = argumentParser;
 		this.particleGenerator = particleGenerator;
-		this.simulation = simulation;
+		this.simulationScopeEntry = simulationScopeEntry;
 	}
 
 	public void run(final String[] args) {
@@ -36,6 +38,9 @@ public class Application {
 				arguments.boxHeight(),
 				arguments.boxWidth(),
 				arguments.maxInitialVelocity());
+
+		final Simulation simulation = simulationScopeEntry.enter(
+				new SimulationScope(arguments.boxWidth(), arguments.boxHeight()));
 
 		final double result = simulation.simulate(
 				particleList, arguments.simulationDuration());

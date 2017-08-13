@@ -21,14 +21,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-import eu.evensson.optpartsim.application.Application;
-import eu.evensson.optpartsim.application.ArgumentParser;
-import eu.evensson.optpartsim.application.Arguments;
-import eu.evensson.optpartsim.application.JCommanderArgumentParser;
-import eu.evensson.optpartsim.application.ParticleGenerator;
-import eu.evensson.optpartsim.application.Printer;
+import eu.evensson.optpartsim.di.ScopeEntry;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.simulation.Simulation;
+import eu.evensson.optpartsim.simulation.SimulationScope;
 
 @DisplayName("An Application")
 @RunWith(JUnitPlatform.class)
@@ -46,18 +42,27 @@ public class ApplicationTest {
 	ParticleGenerator particleGenerator = mock(ParticleGenerator.class);
 	Simulation simulation = mock(Simulation.class);
 	Arguments arguments = mock(Arguments.class);
+	@SuppressWarnings("unchecked")
+	private ScopeEntry<SimulationScope, Simulation> simulationScopeEntry =
+			mock(ScopeEntry.class);
 
 	Application application;
+
 
 	@BeforeEach
 	void createApplication() {
 		application = new Application(printer, argumentParser,
-				particleGenerator, simulation);
+				particleGenerator, simulationScopeEntry);
 	}
 
 	@BeforeEach
 	void mockArguments() {
 		when(argumentParser.parse(ARGS)).thenReturn(arguments);
+	}
+
+	@BeforeEach
+	void mockSimulationScopeEntry() {
+		when(simulationScopeEntry.enter(any())).thenReturn(simulation);
 	}
 
 	@DisplayName("parses arguments")
@@ -98,6 +103,25 @@ public class ApplicationTest {
 
 		verify(particleGenerator).generate(
 				numParticles, boxHeight, boxWidth, maxInitialVelocity);
+	}
+
+	@DisplayName("enters simulation scope")
+	@ParameterizedTest
+	@CsvSource({ "12.34, 56.78" })
+	void entersSimulationScope(final double boxHeight, final double boxWidth) {
+		final String[] args = new String[] {
+				"-h", Double.toString(boxHeight),
+				"-w", Double.toString(boxWidth)
+		};
+		final JCommanderArgumentParser realArgumentParser = new JCommanderArgumentParser(printer);
+		final Arguments realArguments = realArgumentParser.parse(args);
+		when(argumentParser.parse(args)).thenReturn(realArguments);
+
+		application.run(args);
+
+		final SimulationScope expectedSimulationScope =
+				new SimulationScope(boxWidth, boxHeight);
+		verify(simulationScopeEntry).enter(expectedSimulationScope);
 	}
 
 	@DisplayName("simulates with the particle list and simulation duration")
