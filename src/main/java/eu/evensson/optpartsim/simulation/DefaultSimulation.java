@@ -33,9 +33,15 @@ public class DefaultSimulation implements Simulation {
 				final Event event = eventQueue.removeFirst();
 				if (event instanceof WallBounceEvent) {
 					final WallBounceEvent wallBounceEvent = (WallBounceEvent) event;
-					final double speed = -wallBounceEvent.particle().velocity()
-							.x();
+					final Particle particle = wallBounceEvent.particle();
+					final double speed = -particle.velocity().x();
 					totalMomentum += speed * MASS;
+
+					final Particle newParticle = particle
+							.move(wallBounceEvent.time())
+							.bounce(wallBounceEvent.direction());
+					cellStructure.remove(particle);
+					cellStructure.insert(newParticle);
 				}
 			}
 		} catch (final EventQueueEmptyException e) {

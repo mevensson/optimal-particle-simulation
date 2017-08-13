@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
+import eu.evensson.optpartsim.physics.Particle.Direction;
 import eu.evensson.optpartsim.physics.Vector;
 
 @DisplayName("A Simulation")
@@ -135,6 +136,17 @@ public class DefaultSimulationTest {
 					aSimulation.simulate(particles, WALL_BOUNCE_TIME);
 
 			assertThat(momentum, is(SPEED * MASS));
+		}
+
+		@DisplayName("moves and bounces particle in cellstructure")
+		@Test
+		void movesAndBouncesParticleInCellStructure() {
+			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
+
+			final Particle newParticle =
+					PARTICLE.move(WALL_BOUNCE_TIME).bounce(Direction.HORIZONTAL);
+			verify(cellStructure).remove(PARTICLE);
+			verify(cellStructure).insert(newParticle);
 		}
 	}
 }
