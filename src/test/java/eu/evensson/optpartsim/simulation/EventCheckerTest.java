@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.physics.Vector;
+import eu.evensson.optpartsim.simulation.WallBounceEvent.Direction;
 
 @DisplayName("An Event Checker")
 @RunWith(JUnitPlatform.class)
@@ -46,7 +47,8 @@ public class EventCheckerTest {
 		final Event event = anEventChecker.check(particle);
 
 		final WallBounceEvent expectedEvent =
-				new WallBounceEvent((CENTER.x() - WALLS.x()) / speed, particle);
+				new WallBounceEvent((CENTER.x() - WALLS.x()) / speed, particle,
+						Direction.HORIZONTAL);
 		assertThat(event, is(expectedEvent));
 	}
 
@@ -60,7 +62,8 @@ public class EventCheckerTest {
 		final Event event = anEventChecker.check(particle);
 
 		final WallBounceEvent expectedEvent =
-				new WallBounceEvent((CENTER.x() - WALLS.x()) / speed, particle);
+				new WallBounceEvent((CENTER.x() - WALLS.x()) / speed, particle,
+						Direction.HORIZONTAL);
 		assertThat(event, is(expectedEvent));
 	}
 }

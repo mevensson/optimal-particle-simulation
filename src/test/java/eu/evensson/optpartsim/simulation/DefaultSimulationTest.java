@@ -21,12 +21,7 @@ import org.junit.runner.RunWith;
 import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.physics.Vector;
-import eu.evensson.optpartsim.simulation.CellStructure;
-import eu.evensson.optpartsim.simulation.DefaultSimulation;
-import eu.evensson.optpartsim.simulation.Event;
-import eu.evensson.optpartsim.simulation.EventChecker;
-import eu.evensson.optpartsim.simulation.EventQueue;
-import eu.evensson.optpartsim.simulation.WallBounceEvent;
+import eu.evensson.optpartsim.simulation.WallBounceEvent.Direction;
 
 @DisplayName("A Simulation")
 @RunWith(JUnitPlatform.class)
@@ -102,8 +97,8 @@ public class DefaultSimulationTest {
 				new Particle(0, 0.0, CENTER, vector(-SPEED, 0.0));
 
 		final double WALL_BOUNCE_TIME = (WALLS.x() - CENTER.x()) / SPEED;
-		final Event WALL_BOUNCE_EVENT =
-				new WallBounceEvent(WALL_BOUNCE_TIME, PARTICLE);
+		final Event WALL_BOUNCE_EVENT = new WallBounceEvent(
+				WALL_BOUNCE_TIME, PARTICLE, Direction.HORIZONTAL);
 
 		@BeforeEach
 		void addParticle() {
