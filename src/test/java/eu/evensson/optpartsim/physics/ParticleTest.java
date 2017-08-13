@@ -11,10 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-import eu.evensson.optpartsim.physics.Box;
-import eu.evensson.optpartsim.physics.Particle;
-import eu.evensson.optpartsim.physics.Vector;
-
 @DisplayName("A Particle")
 @RunWith(JUnitPlatform.class)
 public class ParticleTest {
@@ -105,6 +101,106 @@ public class ParticleTest {
 				assertThat(movedParticle.velocity(), is(VELOCITY));
 			}
 		}
+	}
+
+	@DisplayName("when horizontally bounced")
+	@Nested
+	class WhenHorizontallyBounced {
+
+		Particle bouncedParticle;
+
+		@BeforeEach
+		void bounceParticle() {
+			bouncedParticle = aParticle.bounce(Particle.Direction.HORIZONTAL);
+		}
+
+		@DisplayName("is not modified")
+		@Test
+		void isNotModified() {
+			assertThat(aParticle,
+					is(new Particle(ID, TIME, POSITION, VELOCITY)));
+		}
+
+		@DisplayName("returns a Particle with")
+		@Nested
+		class ReturnsAParticleWith {
+
+			@DisplayName("the same id")
+			@Test
+			void hasSameId() {
+				assertThat(bouncedParticle.id(), is(ID));
+			}
+
+			@DisplayName("the same time")
+			@Test
+			void hasTheNewTime() {
+				assertThat(bouncedParticle.time(), is(TIME));
+			}
+
+			@DisplayName("the same position")
+			@Test
+			void hasTheNewPosition() {
+				assertThat(bouncedParticle.position(), is(POSITION));
+			}
+
+			@DisplayName("the horizontal part of the velocity is reversed")
+			@Test
+			void hasSameVelocity() {
+				assertThat(bouncedParticle.velocity(), is(
+						vector(-VELOCITY.x(), VELOCITY.y())));
+			}
+		}
+
+	}
+
+	@DisplayName("when vertically bounced")
+	@Nested
+	class WhenVerticallyBounced {
+
+		Particle bouncedParticle;
+
+		@BeforeEach
+		void bounceParticle() {
+			bouncedParticle = aParticle.bounce(Particle.Direction.VERTICAL);
+		}
+
+		@DisplayName("is not modified")
+		@Test
+		void isNotModified() {
+			assertThat(aParticle,
+					is(new Particle(ID, TIME, POSITION, VELOCITY)));
+		}
+
+		@DisplayName("returns a Particle with")
+		@Nested
+		class ReturnsAParticleWith {
+
+			@DisplayName("the same id")
+			@Test
+			void hasSameId() {
+				assertThat(bouncedParticle.id(), is(ID));
+			}
+
+			@DisplayName("the same time")
+			@Test
+			void hasTheNewTime() {
+				assertThat(bouncedParticle.time(), is(TIME));
+			}
+
+			@DisplayName("the same position")
+			@Test
+			void hasTheNewPosition() {
+				assertThat(bouncedParticle.position(), is(POSITION));
+			}
+
+			@DisplayName("the vertical part of the velocity is reversed")
+			@Test
+			void hasSameVelocity() {
+				assertThat(bouncedParticle.velocity(), is(
+						vector(VELOCITY.x(), -VELOCITY.y())));
+			}
+		}
+
 	}
 
 	@DisplayName("returns intersection time when it intersects a box")

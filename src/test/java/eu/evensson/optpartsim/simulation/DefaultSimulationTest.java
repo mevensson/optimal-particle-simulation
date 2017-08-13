@@ -21,7 +21,6 @@ import org.junit.runner.RunWith;
 import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.physics.Vector;
-import eu.evensson.optpartsim.simulation.WallBounceEvent.Direction;
 
 @DisplayName("A Simulation")
 @RunWith(JUnitPlatform.class)
@@ -98,7 +97,7 @@ public class DefaultSimulationTest {
 
 		final double WALL_BOUNCE_TIME = (WALLS.x() - CENTER.x()) / SPEED;
 		final Event WALL_BOUNCE_EVENT = new WallBounceEvent(
-				WALL_BOUNCE_TIME, PARTICLE, Direction.HORIZONTAL);
+				WALL_BOUNCE_TIME, PARTICLE, Particle.Direction.HORIZONTAL);
 
 		@BeforeEach
 		void addParticle() {

@@ -14,7 +14,6 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.physics.Particle;
-import eu.evensson.optpartsim.simulation.WallBounceEvent.Direction;
 
 @DisplayName("A Wall Bounce Event")
 @RunWith(JUnitPlatform.class)
@@ -26,7 +25,7 @@ public class WallBounceEventTest {
 
 	@BeforeEach
 	void createEvent() {
-		aWallBounceEvent = new WallBounceEvent(0.0, PARTICLE, Direction.VERTICAL);
+		aWallBounceEvent = new WallBounceEvent(0.0, PARTICLE, Particle.Direction.VERTICAL);
 	}
 
 	@DisplayName("is an Event")
@@ -43,8 +42,8 @@ public class WallBounceEventTest {
 
 	@DisplayName("has a direction")
 	@ParameterizedTest
-	@EnumSource(value = Direction.class)
-	void hasADirection(final Direction direction) {
+	@EnumSource(value = Particle.Direction.class)
+	void hasADirection(final Particle.Direction direction) {
 		final WallBounceEvent event = new WallBounceEvent(0.0, PARTICLE, direction);
 		assertThat(event.direction(), is(direction));
 	}

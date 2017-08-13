@@ -1,9 +1,18 @@
 package eu.evensson.optpartsim.physics;
 
+import static eu.evensson.optpartsim.physics.Vector.vector;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class Particle {
+
+	public static enum Direction {
+		HORIZONTAL, VERTICAL
+	}
+
+	@SuppressWarnings("serial")
+	public static class InvalidDirectionException extends RuntimeException {
+	}
 
 	private final long id;
 	private final double time;
@@ -42,6 +51,21 @@ public class Particle {
 		final double timeBottom = (box.y() + box.height() - position.y())
 				/ velocity.y();
 		return time + min(max(timeLeft, timeRight), max(timeTop, timeBottom));
+	}
+
+	public Particle bounce(final Direction direction) {
+		final Vector newVelocity;
+		switch (direction) {
+		case HORIZONTAL:
+			newVelocity = vector(-velocity.x(), velocity.y());
+			break;
+		case VERTICAL:
+			newVelocity = vector(velocity.x(), -velocity.y());
+			break;
+		default:
+			throw new InvalidDirectionException();
+		}
+		return new Particle(id, time, position, newVelocity);
 	}
 
 	public Particle move(final double newTime) {

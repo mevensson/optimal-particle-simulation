@@ -4,15 +4,11 @@ import eu.evensson.optpartsim.physics.Particle;
 
 public class WallBounceEvent extends Event {
 
-	public static enum Direction {
-		HORIZONTAL, VERTICAL
-	}
-
 	private Particle particle;
-	private Direction direction;
+	private Particle.Direction direction;
 
 	public WallBounceEvent(final double time, final Particle particle,
-			final Direction direction) {
+			final Particle.Direction direction) {
 		super(time);
 		this.particle = particle;
 		this.direction = direction;
@@ -22,7 +18,7 @@ public class WallBounceEvent extends Event {
 		return particle;
 	}
 
-	public Direction direction() {
+	public Particle.Direction direction() {
 		return direction;
 	}
 

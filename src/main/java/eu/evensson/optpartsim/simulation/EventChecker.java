@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
-import eu.evensson.optpartsim.simulation.WallBounceEvent.Direction;
 
 public class EventChecker {
 
@@ -18,12 +17,12 @@ public class EventChecker {
 		final Optional<Double> wallBounceLeftTime = wallBounceLeftTime(particle);
 		if (wallBounceLeftTime.isPresent()) {
 			return new WallBounceEvent(wallBounceLeftTime.get(), particle,
-					Direction.HORIZONTAL);
+					Particle.Direction.HORIZONTAL);
 		}
 
 		final Optional<Double> wallBounceRightTime = wallBounceRightTime(particle);
 		return new WallBounceEvent(wallBounceRightTime.get(), particle,
-				Direction.HORIZONTAL);
+				Particle.Direction.HORIZONTAL);
 	}
 
 	private Optional<Double> wallBounceLeftTime(final Particle particle) {
