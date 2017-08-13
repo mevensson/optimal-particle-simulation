@@ -42,6 +42,8 @@ public class DefaultSimulation implements Simulation {
 							.bounce(wallBounceEvent.direction());
 					cellStructure.remove(particle);
 					cellStructure.insert(newParticle);
+
+					eventQueue.add(eventChecker.check(newParticle));
 				}
 			}
 		} catch (final EventQueueEmptyException e) {

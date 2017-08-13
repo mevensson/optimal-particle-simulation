@@ -3,6 +3,7 @@ package eu.evensson.optpartsim.simulation;
 import static eu.evensson.optpartsim.physics.Vector.vector;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -100,6 +101,10 @@ public class DefaultSimulationTest {
 		final Event WALL_BOUNCE_EVENT = new WallBounceEvent(
 				WALL_BOUNCE_TIME, PARTICLE, Particle.Direction.HORIZONTAL);
 
+		final Particle NEW_PARTICLE =
+				PARTICLE.move(WALL_BOUNCE_TIME).bounce(Direction.HORIZONTAL);
+		final Event NEW_EVENT = new Event(Double.MAX_VALUE);
+
 		@BeforeEach
 		void addParticle() {
 			particles.add(PARTICLE);
@@ -108,6 +113,7 @@ public class DefaultSimulationTest {
 		@BeforeEach
 		void setEvent() {
 			when(eventChecker.check(PARTICLE)).thenReturn(WALL_BOUNCE_EVENT);
+			when(eventChecker.check(NEW_PARTICLE)).thenReturn(NEW_EVENT);
 		}
 
 		@DisplayName("adds Wall Bounce Event to Event Queue")
@@ -118,7 +124,7 @@ public class DefaultSimulationTest {
 			assertThat(eventQueue.removeFirst(), is(WALL_BOUNCE_EVENT));
 		}
 
-		@DisplayName("does not add momentum for Wall Bounce Event"
+		@DisplayName("does not add momentum for Wall Bounce Event "
 				+ "if simulation duration is less than wall bounce time")
 		@Test
 		void doesNotAddMomentumForWallBounceEvent() {
@@ -128,7 +134,7 @@ public class DefaultSimulationTest {
 			assertThat(momentum, is(0.0));
 		}
 
-		@DisplayName("adds momentum for Wall Bounce Event"
+		@DisplayName("adds momentum for Wall Bounce Event "
 				+ "if simulation duration is at wall bounce time")
 		@Test
 		void addsMomentumForWallBounceEvent() {
@@ -143,10 +149,16 @@ public class DefaultSimulationTest {
 		void movesAndBouncesParticleInCellStructure() {
 			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
 
-			final Particle newParticle =
-					PARTICLE.move(WALL_BOUNCE_TIME).bounce(Direction.HORIZONTAL);
 			verify(cellStructure).remove(PARTICLE);
-			verify(cellStructure).insert(newParticle);
+			verify(cellStructure).insert(NEW_PARTICLE);
+		}
+
+		@DisplayName("adds particles next event to event queue")
+		@Test
+		void adds() {
+			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
+
+			assertThat(eventQueue.removeFirst(), is(sameInstance(NEW_EVENT)));
 		}
 	}
 }
