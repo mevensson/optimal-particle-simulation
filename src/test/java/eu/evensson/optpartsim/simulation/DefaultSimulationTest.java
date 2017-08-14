@@ -33,8 +33,8 @@ public class DefaultSimulationTest {
 
 	final static Box WALLS = new Box(10.0, 20.0, 4.0, 10.0);
 	final static Vector CENTER = vector(
-			(WALLS.x() + WALLS.width()) / 2.0,
-			(WALLS.y() + WALLS.height()) / 2.0);
+			WALLS.x() + WALLS.width() / 2.0,
+			WALLS.y() + WALLS.height() / 2.0);
 
 	static final Event DEFAULT_EVENT = new Event(START_TIME + 1.0);
 
@@ -97,7 +97,7 @@ public class DefaultSimulationTest {
 		final Particle PARTICLE =
 				new Particle(0, 0.0, CENTER, vector(-SPEED, 0.0));
 
-		final double WALL_BOUNCE_TIME = (WALLS.x() - CENTER.x()) / SPEED;
+		final double WALL_BOUNCE_TIME = (CENTER.x() - WALLS.x()) / SPEED;
 		final Event WALL_BOUNCE_EVENT = new WallBounceEvent(
 				WALL_BOUNCE_TIME, PARTICLE, Particle.Direction.HORIZONTAL);
 
@@ -161,4 +161,5 @@ public class DefaultSimulationTest {
 			assertThat(eventQueue.removeFirst(), is(sameInstance(NEW_EVENT)));
 		}
 	}
+
 }
