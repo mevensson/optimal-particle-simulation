@@ -1,10 +1,17 @@
 package eu.evensson.optpartsim.acceptance;
 
+import static java.lang.Math.PI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Random;
+import java.util.stream.DoubleStream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,12 +22,20 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.Main;
+import eu.evensson.optpartsim.application.ApplicationInjector;
 
 @DisplayName("Optimal Particle Simulation")
 @RunWith(JUnitPlatform.class)
 public class AcceptanceTest {
 
+	private static final double RIGHT = 0.0;
+	private static final double DOWN = PI / 2.0;
+	private static final double LEFT = PI;
+	private static final double UP = 3.0 * PI / 2.0;
+	private static final double WHOLE_CIRCLE = 2.0 * PI;
+
 	private final ByteArrayOutputStream systemOut = new ByteArrayOutputStream();
+	private final Random random = mock(Random.class);
 
 	private PrintStream oldSystemOut;
 
@@ -34,6 +49,20 @@ public class AcceptanceTest {
 	public void unStubSystemOut() {
 		System.setOut(oldSystemOut);
 	}
+
+	@BeforeEach
+	public void stubRandom() {
+		when(random.doubles(anyLong(), anyDouble(), anyDouble()))
+				.thenCallRealMethod();
+
+		ApplicationInjector.setRandom(random);
+	}
+
+	@AfterEach
+	public void unStubRandom() {
+		ApplicationInjector.setRandom(null);
+	}
+
 
 	@DisplayName("prints help")
 	@Nested
@@ -140,7 +169,7 @@ public class AcceptanceTest {
 
 		@DisplayName("prints particle momentum on one bounce")
 		@Test
-		void prints0MomentumOnZeroMaxInitialVelocity() {
+		void printsParticleMomentumOnOneBounce() {
 			final double mass = 1.0;
 			final double velocity = 3.0;
 			final double width = 10.0;
@@ -152,13 +181,46 @@ public class AcceptanceTest {
 					"-w", Double.toString(width)
 			};
 
-			// TODO: Mock generated particle to always have max velocity
+			stubRandom(1, velocity, velocity);
+			stubRandom(1, WHOLE_CIRCLE, LEFT);
+			stubRandom(1, width, width / 2.0);
 
 			Main.main(args);
 
-			final double momentum = mass * velocity;
+			final double expectedMomentum = mass * velocity;
 			assertThat(systemOut.toString(),
-					is(String.format(SIMULATION_RESULT_FORMAT, momentum)));
+					is(String.format(SIMULATION_RESULT_FORMAT, expectedMomentum)));
+		}
+
+		@DisplayName("prints particle 2*momentum on two bounces")
+		@Test
+		void printsParticle2xMomentumOnTwoBounces() {
+			final double mass = 1.0;
+			final double velocity = 3.0;
+			final double width = 10.0;
+			final double bounceTime = (width / 2.0) / velocity;
+			final double secondBounceTime = bounceTime + width / velocity;
+			final String[] args = new String[] {
+					"-p", "1",
+					"-d", Double.toString(secondBounceTime),
+					"-v", Double.toString(velocity),
+					"-w", Double.toString(width)
+			};
+
+			stubRandom(1, velocity, velocity);
+			stubRandom(1, WHOLE_CIRCLE, LEFT);
+			stubRandom(1, width, width / 2.0);
+
+			Main.main(args);
+
+			final double expectedMomentum = 2.0 * mass * velocity;
+			assertThat(systemOut.toString(),
+					is(String.format(SIMULATION_RESULT_FORMAT, expectedMomentum)));
+		}
+
+		private void stubRandom(final long values, final double maxValue, final double ... results) {
+			when(random.doubles(1, 0.0, maxValue))
+					.thenAnswer(invocation -> DoubleStream.of(results));
 		}
 	}
 }
