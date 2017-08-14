@@ -181,16 +181,46 @@ public class AcceptanceTest {
 					"-w", Double.toString(width)
 			};
 
-			when(random.doubles(1, 0.0, velocity))
-					.thenReturn(DoubleStream.of(velocity));
-			when(random.doubles(1, 0.0, WHOLE_CIRCLE))
-					.thenReturn(DoubleStream.of(LEFT));
+			stubRandom(1, velocity, velocity);
+			stubRandom(1, WHOLE_CIRCLE, LEFT);
+			stubRandom(1, width, width / 2.0);
 
 			Main.main(args);
 
-			final double momentum = mass * velocity;
+			final double expectedMomentum = mass * velocity;
 			assertThat(systemOut.toString(),
-					is(String.format(SIMULATION_RESULT_FORMAT, momentum)));
+					is(String.format(SIMULATION_RESULT_FORMAT, expectedMomentum)));
+		}
+
+		@DisplayName("prints particle 2*momentum on two bounces")
+		@Test
+		void printsParticle2xMomentumOnTwoBounces() {
+			final double mass = 1.0;
+			final double velocity = 3.0;
+			final double width = 10.0;
+			final double bounceTime = (width / 2.0) / velocity;
+			final double secondBounceTime = bounceTime + width / velocity;
+			final String[] args = new String[] {
+					"-p", "1",
+					"-d", Double.toString(secondBounceTime),
+					"-v", Double.toString(velocity),
+					"-w", Double.toString(width)
+			};
+
+			stubRandom(1, velocity, velocity);
+			stubRandom(1, WHOLE_CIRCLE, LEFT);
+			stubRandom(1, width, width / 2.0);
+
+			Main.main(args);
+
+			final double expectedMomentum = 2.0 * mass * velocity;
+			assertThat(systemOut.toString(),
+					is(String.format(SIMULATION_RESULT_FORMAT, expectedMomentum)));
+		}
+
+		private void stubRandom(final long values, final double maxValue, final double ... results) {
+			when(random.doubles(1, 0.0, maxValue))
+					.thenAnswer(invocation -> DoubleStream.of(results));
 		}
 	}
 }
