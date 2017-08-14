@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.physics.Vector;
-import eu.evensson.optpartsim.simulation.CellStructure;
 import eu.evensson.optpartsim.simulation.CellStructure.ParticleNotFoundException;
 
 @DisplayName("A Cell Structure")
@@ -115,8 +114,23 @@ public class CellStructureTest {
 				assertThat(aCellStructure.remove(secondParticle),
 						is(expectedBox));
 			}
-
 		}
-
 	}
+
+	@DisplayName("particle in lower right corner is in lower right cell")
+	@Test
+	void returnsTopLeftCellWhenParticleRemoved() {
+		final Vector position = vector(
+				STRUCTURE_X + STRUCTURE_WIDTH,
+				STRUCTURE_Y + STRUCTURE_HEIGHT);
+		final Particle aParticle = new Particle(0, 0, position, null);
+		aCellStructure.insert(aParticle);
+
+		final Box expectedBox = new Box(
+				STRUCTURE_X + CELL_WIDTH * (WIDTH_IN_CELLS - 1),
+				STRUCTURE_Y + CELL_HEIGHT * (HEIGHT_IN_CELLS - 1),
+				CELL_WIDTH, CELL_HEIGHT);
+		assertThat(aCellStructure.remove(aParticle), is(expectedBox));
+	}
+
 }
