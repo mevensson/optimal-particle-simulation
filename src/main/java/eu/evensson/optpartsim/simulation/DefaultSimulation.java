@@ -1,5 +1,7 @@
 package eu.evensson.optpartsim.simulation;
 
+import static java.lang.Math.abs;
+
 import java.util.List;
 
 import eu.evensson.optpartsim.physics.Particle;
@@ -34,7 +36,7 @@ public class DefaultSimulation implements Simulation {
 				if (event instanceof WallBounceEvent) {
 					final WallBounceEvent wallBounceEvent = (WallBounceEvent) event;
 					final Particle particle = wallBounceEvent.particle();
-					final double speed = -particle.velocity().x();
+					final double speed = abs(particle.velocity().x());
 					totalMomentum += speed * MASS;
 
 					final Particle newParticle = particle

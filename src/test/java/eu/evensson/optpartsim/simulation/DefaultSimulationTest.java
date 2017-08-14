@@ -162,4 +162,78 @@ public class DefaultSimulationTest {
 		}
 	}
 
+	@DisplayName("with wall bounce right particle")
+	@Nested
+	class WithWallBounceRightParticle {
+
+		final double MASS = 1.0;
+		final double SPEED = 3.0;
+		final Particle PARTICLE =
+				new Particle(0, 0.0, CENTER, vector(SPEED, 0.0));
+
+		final double WALL_BOUNCE_TIME =
+				(WALLS.x() + WALLS.width() - CENTER.x()) / SPEED;
+		final Event WALL_BOUNCE_EVENT = new WallBounceEvent(
+				WALL_BOUNCE_TIME, PARTICLE, Particle.Direction.HORIZONTAL);
+
+		final Particle NEW_PARTICLE =
+				PARTICLE.move(WALL_BOUNCE_TIME).bounce(Direction.HORIZONTAL);
+		final Event NEW_EVENT = new Event(Double.MAX_VALUE);
+
+		@BeforeEach
+		void addParticle() {
+			particles.add(PARTICLE);
+		}
+
+		@BeforeEach
+		void setEvent() {
+			when(eventChecker.check(PARTICLE)).thenReturn(WALL_BOUNCE_EVENT);
+			when(eventChecker.check(NEW_PARTICLE)).thenReturn(NEW_EVENT);
+		}
+
+		@DisplayName("adds Wall Bounce Event to Event Queue")
+		@Test
+		void addsWallBounceEventToEventQueue() {
+			aSimulation.simulate(particles, START_TIME);
+
+			assertThat(eventQueue.removeFirst(), is(WALL_BOUNCE_EVENT));
+		}
+
+		@DisplayName("does not add momentum for Wall Bounce Event "
+				+ "if simulation duration is less than wall bounce time")
+		@Test
+		void doesNotAddMomentumForWallBounceEvent() {
+			final double momentum = aSimulation.simulate(
+					particles, Math.nextDown(WALL_BOUNCE_TIME));
+
+			assertThat(momentum, is(0.0));
+		}
+
+		@DisplayName("adds momentum for Wall Bounce Event "
+				+ "if simulation duration is at wall bounce time")
+		@Test
+		void addsMomentumForWallBounceEvent() {
+			final double momentum =
+					aSimulation.simulate(particles, WALL_BOUNCE_TIME);
+
+			assertThat(momentum, is(SPEED * MASS));
+		}
+
+		@DisplayName("moves and bounces particle in cellstructure")
+		@Test
+		void movesAndBouncesParticleInCellStructure() {
+			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
+
+			verify(cellStructure).remove(PARTICLE);
+			verify(cellStructure).insert(NEW_PARTICLE);
+		}
+
+		@DisplayName("adds particles next event to event queue")
+		@Test
+		void adds() {
+			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
+
+			assertThat(eventQueue.removeFirst(), is(sameInstance(NEW_EVENT)));
+		}
+	}
 }
