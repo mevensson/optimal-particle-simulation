@@ -15,6 +15,14 @@ public class Array2D<T> {
 		array = new Object[width * height];
 	}
 
+	public int width() {
+		return width;
+	}
+
+	public int height() {
+		return height;
+	}
+
 	@SuppressWarnings("unchecked")
 	public T get(final int x, final int y) {
 		return (T) array[getIndex(x, y)];

@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
-import eu.evensson.optpartsim.physics.Array2D;
-
 @DisplayName("A 2D Array")
 @RunWith(JUnitPlatform.class)
 public class Array2DTest {
@@ -27,6 +25,18 @@ public class Array2DTest {
 	@BeforeEach
 	void createBox() {
 		a2DArray = new Array2D<>(WIDTH, HEIGHT);
+	}
+
+	@DisplayName("has a width")
+	@Test
+	void hasAWidth() {
+		assertThat(a2DArray.width(), is(WIDTH));
+	}
+
+	@DisplayName("has a height")
+	@Test
+	void hasAHeight() {
+		assertThat(a2DArray.height(), is(HEIGHT));
 	}
 
 	@DisplayName("for each iterates over all elements in row first order")
