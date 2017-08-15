@@ -167,9 +167,9 @@ public class AcceptanceTest {
 			}
 		}
 
-		@DisplayName("prints particle momentum on one bounce")
+		@DisplayName("prints particle momentum on one horizontal bounce")
 		@Test
-		void printsParticleMomentumOnOneBounce() {
+		void printsParticleMomentumOnOneHorizontalBounce() {
 			final double mass = 1.0;
 			final double velocity = 3.0;
 			final double width = 10.0;
@@ -192,9 +192,9 @@ public class AcceptanceTest {
 					is(String.format(SIMULATION_RESULT_FORMAT, expectedMomentum)));
 		}
 
-		@DisplayName("prints particle 2*momentum on two bounces")
+		@DisplayName("prints particle 2*momentum on two horizontal bounces")
 		@Test
-		void printsParticle2xMomentumOnTwoBounces() {
+		void printsParticle2xMomentumOnTwoHorizontalBounces() {
 			final double mass = 1.0;
 			final double velocity = 3.0;
 			final double width = 10.0;
@@ -214,6 +214,31 @@ public class AcceptanceTest {
 			Main.main(args);
 
 			final double expectedMomentum = 2.0 * mass * velocity;
+			assertThat(systemOut.toString(),
+					is(String.format(SIMULATION_RESULT_FORMAT, expectedMomentum)));
+		}
+
+		@DisplayName("prints particle momentum on one vertical bounce")
+		@Test
+		void printsParticleMomentumOnOneVerticalBounce() {
+			final double mass = 1.0;
+			final double velocity = 3.0;
+			final double height = 10.0;
+			final double bounceTime = (height / 2.0) / velocity;
+			final String[] args = new String[] {
+					"-p", "1",
+					"-d", Double.toString(bounceTime),
+					"-v", Double.toString(velocity),
+					"-h", Double.toString(height)
+			};
+
+			stubRandom(1, velocity, velocity);
+			stubRandom(1, WHOLE_CIRCLE, UP);
+			stubRandom(1, height, height / 2.0);
+
+			Main.main(args);
+
+			final double expectedMomentum = mass * velocity;
 			assertThat(systemOut.toString(),
 					is(String.format(SIMULATION_RESULT_FORMAT, expectedMomentum)));
 		}

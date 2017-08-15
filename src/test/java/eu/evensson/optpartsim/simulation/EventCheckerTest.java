@@ -66,4 +66,19 @@ public class EventCheckerTest {
 				TIME + timeToWall, particle, Particle.Direction.HORIZONTAL);
 		assertThat(event, is(expectedEvent));
 	}
+
+	@DisplayName("returns wall bounce top event")
+	@Test
+	void returnsWallBounceTopEvent() {
+		final double speed = 1.0;
+		final Vector velocity = vector(0.0, -speed);
+		final Particle particle = new Particle(ID, TIME, CENTER, velocity);
+
+		final Event event = anEventChecker.check(particle);
+
+		final double timeToWall = (CENTER.y() - WALLS.y()) / speed;
+		final WallBounceEvent expectedEvent = new WallBounceEvent(
+				TIME + timeToWall, particle, Particle.Direction.VERTICAL);
+		assertThat(event, is(expectedEvent));
+	}
 }
