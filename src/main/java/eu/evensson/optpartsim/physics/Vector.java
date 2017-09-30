@@ -37,6 +37,10 @@ public class Vector {
 		return new Vector(x * scalar, y * scalar);
 	}
 
+	public Vector subtract(final Vector otherVector) {
+		return new Vector(x - otherVector.x, y - otherVector.y);
+	}
+
 	// Generated methods below
 	@Override
 	public String toString() {

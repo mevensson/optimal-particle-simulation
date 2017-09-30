@@ -109,6 +109,52 @@ public class VectorTest {
 		}
 	}
 
+	@DisplayName("when subtracted with other vector")
+	@Nested
+	class WhenSubtractedWithOtherVector {
+
+		static final double OTHER_X = 15.0;
+		static final double OTHER_Y = 25.0;
+
+		Vector otherVector;
+		Vector resultVector;
+
+		@BeforeEach
+		void addWithOtherVector() {
+			otherVector = vector(OTHER_X, OTHER_Y);
+			resultVector = aVector.subtract(otherVector);
+		}
+
+		@DisplayName("is not modified")
+		@Test
+		void isNotModified() {
+			assertThat(aVector, is(vector(X, Y)));
+		}
+
+		@DisplayName("does not modify the other vector")
+		@Test
+		void doesNotModifyOtherVector() {
+			assertThat(otherVector, is(vector(OTHER_X, OTHER_Y)));
+		}
+
+		@DisplayName("returns a vector with")
+		@Nested
+		class ReturnsAVectorWith {
+
+			@DisplayName("an X that is the difference of the Xes")
+			@Test
+			void anXThatIsTheDifferenceOfTheXes() {
+				assertThat(resultVector.x(), is(X - OTHER_X));
+			}
+
+			@DisplayName("a Y that is the difference of the Ys")
+			@Test
+			void aYThatIsTheDifferenceOfTheYs() {
+				assertThat(resultVector.y(), is(Y - OTHER_Y));
+			}
+		}
+	}
+
 	@DisplayName("when multiplied with scalar")
 	@Nested
 	class WhenMultipliedWithScalar {
