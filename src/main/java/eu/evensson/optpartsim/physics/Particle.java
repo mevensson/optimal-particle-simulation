@@ -106,17 +106,18 @@ public class Particle {
 	}
 
 	public Optional<Double> collisionTime(final Particle other) {
-		final Vector q1 = position.subtract(velocity.multiply(time));
-		final Vector q2 = other.position.subtract(other.velocity.multiply(other.time));
-		final Vector dx = q1.subtract(q2);
+		final Vector pT0 = position.subtract(velocity.multiply(time));
+		final Vector pT0Other = other.position.subtract(
+				other.velocity.multiply(other.time));
+		final Vector dp = pT0.subtract(pT0Other);
 
 		final Vector dv = velocity.subtract(other.velocity);
 
 		final double s = RADIUS + RADIUS;
 
 		final double a = dv.x() * dv.x() + dv.y() * dv.y();
-		final double b = 2.0 * (dv.x() * dx.x() + dv.y() * dx.y());
-		final double c = dx.x() * dx.x() + dx.y() * dx.y() - s * s;
+		final double b = 2.0 * (dv.x() * dp.x() + dv.y() * dp.y());
+		final double c = dp.x() * dp.x() + dp.y() * dp.y() - s * s;
 
 		final double d = b * b - 4.0 * a * c;
 		if (d < 0) {
