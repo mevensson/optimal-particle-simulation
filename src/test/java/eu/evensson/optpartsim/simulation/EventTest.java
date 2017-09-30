@@ -9,13 +9,8 @@ import static org.hamcrest.Matchers.lessThan;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
-
-import eu.evensson.optpartsim.simulation.Event;
 
 @DisplayName("An Event")
-@RunWith(JUnitPlatform.class)
 public class EventTest {
 
 	static final double TIME = 12.3;

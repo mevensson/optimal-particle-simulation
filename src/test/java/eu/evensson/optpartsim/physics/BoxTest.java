@@ -6,13 +6,8 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
-
-import eu.evensson.optpartsim.physics.Box;
 
 @DisplayName("A Box")
-@RunWith(JUnitPlatform.class)
 public class BoxTest {
 
 	static final double X = 10.0;

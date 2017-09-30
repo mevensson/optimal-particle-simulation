@@ -10,13 +10,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.physics.Particle;
 
 @DisplayName("A Wall Bounce Event")
-@RunWith(JUnitPlatform.class)
 public class WallBounceEventTest {
 
 	static final Particle PARTICLE = new Particle(0, 0, null, null);

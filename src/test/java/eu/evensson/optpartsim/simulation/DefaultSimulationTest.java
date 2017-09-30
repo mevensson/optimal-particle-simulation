@@ -16,8 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
@@ -25,7 +23,6 @@ import eu.evensson.optpartsim.physics.Particle.Direction;
 import eu.evensson.optpartsim.physics.Vector;
 
 @DisplayName("A Simulation")
-@RunWith(JUnitPlatform.class)
 public class DefaultSimulationTest {
 
 	private static final double START_TIME = 0.0;

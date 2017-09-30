@@ -8,15 +8,10 @@ import static org.hamcrest.Matchers.sameInstance;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.physics.Particle;
-import eu.evensson.optpartsim.simulation.Event;
-import eu.evensson.optpartsim.simulation.TransferEvent;
 
 @DisplayName("A Transfer Event")
-@RunWith(JUnitPlatform.class)
 public class TransferEventTest {
 
 	static final Particle PARTICLE = new Particle(0, 0, null, null);

@@ -11,16 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
-
-import eu.evensson.optpartsim.application.ArgumentParser;
-import eu.evensson.optpartsim.application.Arguments;
-import eu.evensson.optpartsim.application.JCommanderArgumentParser;
-import eu.evensson.optpartsim.application.Printer;
 
 @DisplayName("An Argument Parser")
-@RunWith(JUnitPlatform.class)
 public class ArgumentParserTest {
 
 	private static final String HELP_MESSAGE =

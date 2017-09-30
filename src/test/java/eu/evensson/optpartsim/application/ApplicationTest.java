@@ -18,8 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.di.ScopeEntry;
 import eu.evensson.optpartsim.physics.Particle;
@@ -27,7 +25,6 @@ import eu.evensson.optpartsim.simulation.Simulation;
 import eu.evensson.optpartsim.simulation.SimulationScope;
 
 @DisplayName("An Application")
-@RunWith(JUnitPlatform.class)
 public class ApplicationTest {
 
 	private static final String[] ARGS = new String[0];

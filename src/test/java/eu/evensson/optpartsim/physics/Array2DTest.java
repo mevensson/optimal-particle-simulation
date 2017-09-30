@@ -10,11 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 @DisplayName("A 2D Array")
-@RunWith(JUnitPlatform.class)
 public class Array2DTest {
 
 	static final int WIDTH = 3;

@@ -9,15 +9,12 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.physics.Vector;
 
 @DisplayName("An Event Checker")
-@RunWith(JUnitPlatform.class)
 public class EventCheckerTest {
 
 	private static final long ID = 0;

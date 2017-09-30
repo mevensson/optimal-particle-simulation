@@ -11,13 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
-
-import eu.evensson.optpartsim.physics.Vector;
 
 @DisplayName("A Vector")
-@RunWith(JUnitPlatform.class)
 public class VectorTest {
 
 	static final double X = 10.0;

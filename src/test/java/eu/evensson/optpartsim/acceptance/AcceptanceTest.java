@@ -18,14 +18,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.Main;
 import eu.evensson.optpartsim.application.ApplicationInjector;
 
 @DisplayName("Optimal Particle Simulation")
-@RunWith(JUnitPlatform.class)
 public class AcceptanceTest {
 
 	private static final double RIGHT = 0.0;

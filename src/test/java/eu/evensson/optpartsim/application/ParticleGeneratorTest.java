@@ -20,16 +20,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
-import eu.evensson.optpartsim.application.ParticleGenerator;
-import eu.evensson.optpartsim.application.RandomParticleGenerator;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.physics.Vector;
 
 @DisplayName("An Argument Parser")
-@RunWith(JUnitPlatform.class)
 public class ParticleGeneratorTest {
 
 	private static final double EXPECTED_START_TIME = 0.0;

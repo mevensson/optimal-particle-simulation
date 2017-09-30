@@ -9,8 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
@@ -18,7 +16,6 @@ import eu.evensson.optpartsim.physics.Vector;
 import eu.evensson.optpartsim.simulation.CellStructure.ParticleNotFoundException;
 
 @DisplayName("A Cell Structure")
-@RunWith(JUnitPlatform.class)
 public class CellStructureTest {
 
 	final static double STRUCTURE_X = 10.0;
