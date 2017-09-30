@@ -1,16 +1,11 @@
 package eu.evensson.optpartsim.simulation;
 
-import static java.lang.Math.abs;
-
 import java.util.List;
 
 import eu.evensson.optpartsim.physics.Particle;
-import eu.evensson.optpartsim.physics.Particle.InvalidDirectionException;
 import eu.evensson.optpartsim.simulation.EventQueue.EventQueueEmptyException;
 
 public class DefaultSimulation implements Simulation {
-
-	private static final double MASS = 1.0;
 
 	private final CellStructure cellStructure;
 	private final EventQueue eventQueue;
@@ -37,20 +32,7 @@ public class DefaultSimulation implements Simulation {
 				if (event instanceof WallBounceEvent) {
 					final WallBounceEvent wallBounceEvent = (WallBounceEvent) event;
 					final Particle particle = wallBounceEvent.particle();
-					final double speed;
-					switch (wallBounceEvent.direction()) {
-					case HORIZONTAL:
-						speed = abs(particle.velocity().x());
-						break;
-
-					case VERTICAL:
-						speed = abs(particle.velocity().y());
-						break;
-
-					default:
-						throw new InvalidDirectionException();
-					}
-					totalMomentum += speed * MASS;
+					totalMomentum += particle.momentum(wallBounceEvent.direction());
 
 					final Particle newParticle = particle
 							.move(wallBounceEvent.time())
