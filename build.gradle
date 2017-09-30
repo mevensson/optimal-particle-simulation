@@ -12,6 +12,11 @@ apply plugin: 'application'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.2'
+}
+
+
 mainClassName = 'eu.evensson.optpartsim.Main'
 applicationDefaultJvmArgs = []
 
@@ -34,7 +39,7 @@ dependencies {
 
     testCompile 'org.hamcrest:java-hamcrest:2.+'
 
-    testCompile 'org.mockito:mockito-core:2.7.22'
+    testCompile 'org.mockito:mockito-core:2.+'
 
     testCompile 'org.junit.platform:junit-platform-runner:1+'
 }
