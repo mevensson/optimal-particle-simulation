@@ -1,7 +1,6 @@
 package eu.evensson.optpartsim.simulation;
 
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import eu.evensson.optpartsim.physics.Box;
@@ -18,49 +17,21 @@ public class EventChecker {
 
 	public Event check(final Particle particle) {
 		return Stream.of(
-				wallBounceLeftTime(particle),
-				wallBounceRightTime(particle),
-				wallBounceTopTime(particle))
-			.filter(Optional::isPresent)
-			.map(Optional::get)
+				wallBounceHorizontalEvent(particle),
+				wallBounceVerticalEvent(particle))
 			.min(Comparator.comparingDouble(event -> event.time()))
 			.get();
 	}
 
-	private Optional<Event> wallBounceLeftTime(final Particle particle) {
+	private Event wallBounceHorizontalEvent(final Particle particle) {
 		final Box walls = cellStructure.getWalls();
-		final double distance = particle.position().x() - walls.x();
-		final double timeToBounce = distance / -particle.velocity().x();
-		if (timeToBounce > 0) {
-			return Optional.of(new WallBounceEvent(
-					timeToBounce + particle.time(), particle, Direction.HORIZONTAL));
-		}
-
-		return Optional.empty();
+		final double bounceTime = particle.collisionTime(walls, Direction.HORIZONTAL);
+		return new WallBounceEvent(bounceTime, particle, Direction.HORIZONTAL);
 	}
 
-	private Optional<Event> wallBounceRightTime(final Particle particle) {
+	private Event wallBounceVerticalEvent(final Particle particle) {
 		final Box walls = cellStructure.getWalls();
-		final double distance =
-				(walls.x() + walls.width()) - particle.position().x();
-		final double timeToBounce = distance / particle.velocity().x();
-		if (timeToBounce > 0) {
-			return Optional.of(new WallBounceEvent(
-					timeToBounce + particle.time(), particle, Direction.HORIZONTAL));
-		}
-
-		return Optional.empty();
-	}
-
-	private Optional<Event> wallBounceTopTime(final Particle particle) {
-		final Box walls = cellStructure.getWalls();
-		final double distance = particle.position().y() - walls.y();
-		final double timeToBounce = distance / -particle.velocity().y();
-		if (timeToBounce > 0) {
-			return Optional.of(new WallBounceEvent(
-					timeToBounce + particle.time(), particle, Direction.VERTICAL));
-		}
-
-		return Optional.empty();
+		final double bounceTime = particle.collisionTime(walls, Direction.VERTICAL);
+		return new WallBounceEvent(bounceTime, particle, Direction.VERTICAL);
 	}
 }
