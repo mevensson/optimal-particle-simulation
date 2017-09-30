@@ -27,7 +27,7 @@ public class ArgumentParserTest {
 			"      Height of bounding box\n" +
 			"      Default: 10.0\n" +
 			"    -p\n" +
-			"      Number of parameters\n" +
+			"      Number of particles\n" +
 			"      Default: 0\n" +
 			"    -v\n" +
 			"      Max initial velocity\n" +

@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameter;
 
 public class Arguments {
 
-	@Parameter(names = {"-p" }, description = "Number of parameters")
+	@Parameter(names = {"-p" }, description = "Number of particles")
 	private long particles;
 
 	@Parameter(names = {"-h" }, description = "Height of bounding box")
