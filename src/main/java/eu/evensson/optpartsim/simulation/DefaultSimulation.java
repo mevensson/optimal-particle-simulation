@@ -44,7 +44,7 @@ public class DefaultSimulation implements Simulation {
 						break;
 
 					case VERTICAL:
-						speed = -particle.velocity().y();
+						speed = abs(particle.velocity().y());
 						break;
 
 					default:

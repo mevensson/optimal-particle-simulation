@@ -141,7 +141,7 @@ public class AcceptanceTest {
 		@Nested
 		class NoBounce {
 
-			@DisplayName("prints 0 momentum on deafult time argument")
+			@DisplayName("prints 0 momentum on default time argument")
 			@Test
 			void prints0MomentumOnDefaultTimeArguemnt() {
 				final String[] args = new String[] { "-p", "1" };
@@ -236,6 +236,32 @@ public class AcceptanceTest {
 			Main.main(args);
 
 			final double expectedMomentum = mass * velocity;
+			assertThat(systemOut.toString(),
+					is(String.format(SIMULATION_RESULT_FORMAT, expectedMomentum)));
+		}
+
+		@DisplayName("prints particle 2*momentum on two vertical bounces")
+		@Test
+		void printsParticle2xMomentumOnTwoVerticalBounces() {
+			final double mass = 1.0;
+			final double velocity = 3.0;
+			final double height = 10.0;
+			final double bounceTime = (height / 2.0) / velocity;
+			final double secondBounceTime = bounceTime + height / velocity;
+			final String[] args = new String[] {
+					"-p", "1",
+					"-d", Double.toString(secondBounceTime),
+					"-v", Double.toString(velocity),
+					"-h", Double.toString(height)
+			};
+
+			stubRandom(1, velocity, velocity);
+			stubRandom(1, WHOLE_CIRCLE, UP);
+			stubRandom(1, height, height / 2.0);
+
+			Main.main(args);
+
+			final double expectedMomentum = 2.0 * mass * velocity;
 			assertThat(systemOut.toString(),
 					is(String.format(SIMULATION_RESULT_FORMAT, expectedMomentum)));
 		}
