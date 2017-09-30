@@ -118,8 +118,8 @@ public class CellStructureTest {
 	@Test
 	void returnsTopLeftCellWhenParticleRemoved() {
 		final Vector position = vector(
-				STRUCTURE_X + STRUCTURE_WIDTH,
-				STRUCTURE_Y + STRUCTURE_HEIGHT);
+				STRUCTURE_X + STRUCTURE_WIDTH - Particle.RADIUS,
+				STRUCTURE_Y + STRUCTURE_HEIGHT - Particle.RADIUS);
 		final Particle aParticle = new Particle(0, 0, position, null);
 		aCellStructure.insert(aParticle);
 

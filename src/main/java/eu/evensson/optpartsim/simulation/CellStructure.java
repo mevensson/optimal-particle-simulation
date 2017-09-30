@@ -82,14 +82,10 @@ public class CellStructure {
 	}
 
 	private int cellColumn(final double x) {
-		return Math.min(
-				cells.width() - 1,
-				(int) Math.floor((x - walls.x()) / cellWidth));
+		return (int) Math.floor((x - walls.x()) / cellWidth);
 	}
 
 	private int cellRow(final double y) {
-		return Math.min(
-				cells.height() - 1,
-				(int) Math.floor((y - walls.y()) / cellHeight));
+		return (int) Math.floor((y - walls.y()) / cellHeight);
 	}
 }
