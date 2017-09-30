@@ -3,6 +3,7 @@ package eu.evensson.optpartsim.application;
 import java.util.List;
 
 import eu.evensson.optpartsim.di.ScopeEntry;
+import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.simulation.Simulation;
 import eu.evensson.optpartsim.simulation.SimulationScope;
@@ -33,10 +34,14 @@ public class Application {
 			return;
 		}
 
+		final Box box = new Box(
+				Particle.RADIUS,
+				Particle.RADIUS,
+				arguments.boxWidth() - 2.0 * Particle.RADIUS,
+				arguments.boxHeight() - 2.0 * Particle.RADIUS);
 		final List<Particle> particleList = particleGenerator.generate(
 				arguments.particles(),
-				arguments.boxHeight(),
-				arguments.boxWidth(),
+				box,
 				arguments.maxInitialVelocity());
 
 		final Simulation simulation = simulationScopeEntry.enter(

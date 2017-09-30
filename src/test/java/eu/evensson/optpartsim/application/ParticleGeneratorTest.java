@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.physics.Vector;
 
@@ -41,7 +42,8 @@ public class ParticleGeneratorTest {
 	@DisplayName("returns empty list when num particles is zero")
 	@Test
 	void returnsEmptyListWhenNumParticlesIsZero() {
-		final List<Particle> particleList = particleGenerator.generate(0, 0.0, 0.0, 0.0);
+		final List<Particle> particleList = particleGenerator.generate(
+				0, new Box(0.0, 0.0, 0.0, 0.0), 0.0);
 
 		assertThat(particleList, is(empty()));
 	}
@@ -61,8 +63,10 @@ public class ParticleGeneratorTest {
 		final double[] expectedAngles =
 				stubRandomDoubleStream(numParticles, 0.0, 2.0 * PI);
 
-		final List<Particle> particleList =
-				particleGenerator.generate(numParticles, boxHeight, boxWidth, maxVelocity);
+		final List<Particle> particleList = particleGenerator.generate(
+				numParticles,
+				new Box(0.0, 0.0, boxWidth, boxHeight),
+				maxVelocity);
 
 		assertThat(particleList, hasSize(numParticles));
 		int index = 0;

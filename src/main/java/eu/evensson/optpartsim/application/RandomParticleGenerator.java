@@ -8,10 +8,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PrimitiveIterator.OfDouble;
-
-import eu.evensson.optpartsim.physics.Particle;
-
 import java.util.Random;
+
+import eu.evensson.optpartsim.physics.Box;
+import eu.evensson.optpartsim.physics.Particle;
 
 public class RandomParticleGenerator implements ParticleGenerator {
 
@@ -26,13 +26,12 @@ public class RandomParticleGenerator implements ParticleGenerator {
 
 	@Override
 	public List<Particle> generate(final long numParticles,
-			final double boxHeight,
-			final double boxWidth,
+			final Box box,
 			final double maxInitialVelocity) {
 		final Iterator<Double> xPositions =
-				randomNumbers(numParticles, 0.0, boxWidth);
+				randomNumbers(numParticles, box.x(), box.x() + box.width());
 		final Iterator<Double> yPositions =
-				randomNumbers(numParticles, 0.0, boxHeight);
+				randomNumbers(numParticles, box.y(), box.y() + box.height());
 		final Iterator<Double> absVelocities =
 				randomNumbers(numParticles, 0.0, maxInitialVelocity);
 		final Iterator<Double> angles =

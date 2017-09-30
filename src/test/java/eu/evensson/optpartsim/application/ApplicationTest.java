@@ -20,6 +20,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import eu.evensson.optpartsim.di.ScopeEntry;
+import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.simulation.Simulation;
 import eu.evensson.optpartsim.simulation.SimulationScope;
@@ -98,8 +99,13 @@ public class ApplicationTest {
 
 		application.run(args);
 
+		final Box expectedBox = new Box(
+				Particle.RADIUS,
+				Particle.RADIUS,
+				boxWidth - 2.0 * Particle.RADIUS,
+				boxHeight - 2.0 * Particle.RADIUS);
 		verify(particleGenerator).generate(
-				numParticles, boxHeight, boxWidth, maxInitialVelocity);
+				numParticles, expectedBox, maxInitialVelocity);
 	}
 
 	@DisplayName("enters simulation scope")
@@ -125,7 +131,7 @@ public class ApplicationTest {
 	@Test
 	void simulatesWithParticleListAndDuration() {
 		final List<Particle> particleList = new ArrayList<>();
-		when(particleGenerator.generate(anyLong(), anyDouble(), anyDouble(), anyDouble()))
+		when(particleGenerator.generate(anyLong(), any(), anyDouble()))
 				.thenReturn(particleList);
 
 		final double duration = 12.34;
