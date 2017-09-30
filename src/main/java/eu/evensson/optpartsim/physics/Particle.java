@@ -2,9 +2,10 @@ package eu.evensson.optpartsim.physics;
 
 import static eu.evensson.optpartsim.physics.Vector.vector;
 import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 public class Particle {
+
+	public static final double RADIUS = 1.0;
 
 	public static enum Direction {
 		HORIZONTAL, VERTICAL
@@ -43,16 +44,6 @@ public class Particle {
 		return velocity;
 	}
 
-	public double intersects(final Box box) {
-		final double timeLeft = (box.x() - position.x()) / velocity.x();
-		final double timeRight = (box.x() + box.width() - position.x())
-				/ velocity.x();
-		final double timeTop = (box.y() - position.y()) / velocity.y();
-		final double timeBottom = (box.y() + box.height() - position.y())
-				/ velocity.y();
-		return time + min(max(timeLeft, timeRight), max(timeTop, timeBottom));
-	}
-
 	public Particle bounce(final Direction direction) {
 		final Vector newVelocity;
 		switch (direction) {
@@ -66,6 +57,29 @@ public class Particle {
 			throw new InvalidDirectionException();
 		}
 		return new Particle(id, time, position, newVelocity);
+	}
+
+	public double collisionTime(final Box box, final Direction direction) {
+		switch (direction) {
+		case HORIZONTAL:
+			final double distanceLeft = position.x() - box.x() - RADIUS;
+			final double timeLeft = distanceLeft / -velocity.x();
+			final double distanceRight = box.x() + box.width() - position.x()
+					- RADIUS;
+			final double timeRight = distanceRight / velocity.x();
+			return time + max(timeLeft, timeRight);
+
+		case VERTICAL:
+			final double distanceTop = position.y() - box.y() - RADIUS;
+			final double timeTop = distanceTop / -velocity.y();
+			final double distanceBottom = box.y() + box.height() - position.y()
+					- RADIUS;
+			final double timeBottom = distanceBottom / velocity.y();
+			return time + max(timeTop, timeBottom);
+
+		default:
+			throw new InvalidDirectionException();
+		}
 	}
 
 	public Particle move(final double newTime) {

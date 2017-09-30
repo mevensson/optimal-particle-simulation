@@ -9,13 +9,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import eu.evensson.optpartsim.physics.Particle.Direction;
+
 @DisplayName("A Particle")
 public class ParticleTest {
 
 	static final long ID = 12;
 	static final double TIME = 1.3;
-	static final Vector POSITION = vector(10.0, 10.0);
-	static final Vector VELOCITY = vector(20.0, 20.0);
+	static final Vector POSITION = vector(10.0, 20.0);
+	static final Vector VELOCITY = vector(30.0, 40.0);
 
 	Particle aParticle;
 
@@ -200,19 +202,21 @@ public class ParticleTest {
 
 	}
 
-	@DisplayName("returns intersection time when it intersects a box")
+	@DisplayName("returns collision time when it collides with a box")
 	@Nested
 	class IntersectsABox {
 		static final double SPEED = 2.0;
-		final Box BOX = new Box(5.0, 5.0, 10.0, 10.0);
+		final Box BOX = new Box(5.0, 10.0, 20.0, 30.0);
 
 		@DisplayName("to the left")
 		@Test
 		void toTheLeft() {
 			final Vector velocity = vector(-SPEED, SPEED / 2);
 			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
-			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
-			assertThat(particle.intersects(BOX), is(intersectionTime));
+			final double distance = POSITION.x() - BOX.x() - Particle.RADIUS;
+			final double intersectionTime = TIME + distance / SPEED;
+			assertThat(particle.collisionTime(BOX, Direction.HORIZONTAL),
+					is(intersectionTime));
 		}
 
 		@DisplayName("to the right")
@@ -220,8 +224,10 @@ public class ParticleTest {
 		void toTheRight() {
 			final Vector velocity = vector(SPEED, SPEED / 2);
 			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
-			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
-			assertThat(particle.intersects(BOX), is(intersectionTime));
+			final double distance = BOX.x() + BOX.width() - POSITION.x() - Particle.RADIUS;
+			final double intersectionTime = TIME + distance / SPEED;
+			assertThat(particle.collisionTime(BOX, Direction.HORIZONTAL),
+					is(intersectionTime));
 		}
 
 		@DisplayName("to the top")
@@ -229,8 +235,10 @@ public class ParticleTest {
 		void toTheTop() {
 			final Vector velocity = vector(SPEED / 2, -SPEED);
 			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
-			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
-			assertThat(particle.intersects(BOX), is(intersectionTime));
+			final double distance = POSITION.y() - BOX.y() -Particle.RADIUS;
+			final double intersectionTime = TIME + distance / SPEED;
+			assertThat(particle.collisionTime(BOX, Direction.VERTICAL),
+					is(intersectionTime));
 		}
 
 		@DisplayName("to the bottom")
@@ -238,8 +246,10 @@ public class ParticleTest {
 		void toTheBottom() {
 			final Vector velocity = vector(SPEED / 2, SPEED);
 			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
-			final double intersectionTime = TIME + (POSITION.x() - BOX.x()) / SPEED;
-			assertThat(particle.intersects(BOX), is(intersectionTime));
+			final double distance = BOX.y() + BOX.height() - POSITION.y() - Particle.RADIUS;
+			final double intersectionTime = TIME + distance / SPEED;
+			assertThat(particle.collisionTime(BOX, Direction.VERTICAL),
+					is(intersectionTime));
 		}
 	}
 }
