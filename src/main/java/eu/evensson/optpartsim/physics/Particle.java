@@ -1,10 +1,12 @@
 package eu.evensson.optpartsim.physics;
 
 import static eu.evensson.optpartsim.physics.Vector.vector;
+import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
 public class Particle {
 
+	public static final double MASS = 1.0;
 	public static final double RADIUS = 1.0;
 
 	public static enum Direction {
@@ -42,6 +44,23 @@ public class Particle {
 
 	public Vector velocity() {
 		return velocity;
+	}
+
+	public double momentum(final Direction direction) {
+		final double speed;
+		switch (direction) {
+		case HORIZONTAL:
+			speed = abs(velocity.x());
+			break;
+
+		case VERTICAL:
+			speed = abs(velocity.y());
+			break;
+
+		default:
+			throw new InvalidDirectionException();
+		}
+		return speed * MASS;
 	}
 
 	public Particle bounce(final Direction direction) {

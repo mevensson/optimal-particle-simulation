@@ -1,6 +1,7 @@
 package eu.evensson.optpartsim.physics;
 
 import static eu.evensson.optpartsim.physics.Vector.vector;
+import static java.lang.Math.abs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -48,6 +49,20 @@ public class ParticleTest {
 	@Test
 	void hasAVelocity() {
 		assertThat(aParticle.velocity(), is(VELOCITY));
+	}
+
+	@DisplayName("has a horizontal Momentum")
+	@Test
+	void hasAHorizontalMomentum() {
+		final double momentum = abs(VELOCITY.x()) * Particle.MASS;
+		assertThat(aParticle.momentum(Direction.HORIZONTAL), is(momentum));
+	}
+
+	@DisplayName("has a vertical Momentum")
+	@Test
+	void hasAVerticalMomentum() {
+		final double momentum = abs(VELOCITY.y()) * Particle.MASS;
+		assertThat(aParticle.momentum(Direction.VERTICAL), is(momentum));
 	}
 
 	@DisplayName("when moved")
