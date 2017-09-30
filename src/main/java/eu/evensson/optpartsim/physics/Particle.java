@@ -3,6 +3,10 @@ package eu.evensson.optpartsim.physics;
 import static eu.evensson.optpartsim.physics.Vector.vector;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.sqrt;
+
+import java.util.Optional;
 
 public class Particle {
 
@@ -99,6 +103,35 @@ public class Particle {
 		default:
 			throw new InvalidDirectionException();
 		}
+	}
+
+	public Optional<Double> collisionTime(final Particle other) {
+		final Vector q1 = position.subtract(velocity.multiply(time));
+		final Vector q2 = other.position.subtract(other.velocity.multiply(other.time));
+		final Vector dx = q1.subtract(q2);
+
+		final Vector dv = velocity.subtract(other.velocity);
+
+		final double s = RADIUS + RADIUS;
+
+		final double a = dv.x() * dv.x() + dv.y() * dv.y();
+		final double b = 2.0 * (dv.x() * dx.x() + dv.y() * dx.y());
+		final double c = dx.x() * dx.x() + dx.y() * dx.y() - s * s;
+
+		final double d = b * b - 4.0 * a * c;
+		if (d < 0) {
+			return Optional.empty();
+		}
+
+		final double t1 = (-b - sqrt(d)) / (2 * a);
+		final double t2 = (-b + sqrt(d)) / (2 * a);
+
+		final double minTime = min(t1, t2);
+		if (minTime >= time) {
+			return Optional.of(minTime);
+		}
+
+		return Optional.empty();
 	}
 
 	public Particle move(final double newTime) {
