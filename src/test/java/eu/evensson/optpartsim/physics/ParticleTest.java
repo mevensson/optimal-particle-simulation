@@ -425,5 +425,13 @@ public class ParticleTest {
 
 			assertThat(collisionTime, isEmpty());
 		}
+
+		@DisplayName("when other particle is itself")
+		@Test
+		void withItself() {
+			final Optional<Double> collisionTime = aParticle.collisionTime(aParticle);
+
+			assertThat(collisionTime, isEmpty());
+		}
 	}
 }
