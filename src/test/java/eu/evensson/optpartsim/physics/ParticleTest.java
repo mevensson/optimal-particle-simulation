@@ -357,8 +357,10 @@ public class ParticleTest {
 		@DisplayName("when other particle is in opposite direction on x-axis")
 		@ParameterizedTest
 		@CsvSource({
-				"0.0, 6.0, -1.0, 0.0, 14.0, 1.0", // Zero time
-				"9.0, 6.0, -1.0, 9.0, 14.0, 1.0", // Same time
+				"0.0, 6.0, -1.0, 0.0, 14.0, 1.0",  // Zero time
+				"9.0, 6.0, -1.0, 9.0, 14.0, 1.0",  // Same time
+				"9.0, 15.0, -1.0, 0.0, 14.0, 1.0", // Particle past collision
+				"0.0, 6.0, -1.0, 9.0, 5.0, 1.0",   // Other past collision
 				})
 		void oppositeDirectionOnXAxis(
 				final double t1, final double x1, final double xs1,

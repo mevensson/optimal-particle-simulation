@@ -128,7 +128,7 @@ public class Particle {
 		final double t2 = (-b + sqrt(d)) / (2 * a);
 
 		final double minTime = min(t1, t2);
-		if (minTime >= time) {
+		if (minTime >= max(time, other.time)) {
 			return Optional.of(minTime);
 		}
 
