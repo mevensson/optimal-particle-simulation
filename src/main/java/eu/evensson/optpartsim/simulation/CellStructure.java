@@ -1,5 +1,7 @@
 package eu.evensson.optpartsim.simulation;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,6 +63,25 @@ public class CellStructure {
 		return cell.box();
 	}
 
+	public Collection<Particle> neighbourParticles(final Particle particle) {
+		final Collection<Particle> result = new ArrayList<>();
+		final int px = cellColumn(particle);
+		final int py = cellRow(particle);
+		for (int nx = px - 1; nx <= px + 1; nx++) {
+			if (nx < 0 || nx >= cells.width()) {
+				continue;
+			}
+			for (int ny = py - 1; ny <= py + 1; ny++) {
+				if (ny < 0 || ny >= cells.height()) {
+					continue;
+				}
+				final Cell cell = cells.get(nx, ny);
+				result.addAll(cell.particles);
+			}
+		}
+		return result;
+	}
+
 	public Box remove(final Particle particle) {
 		final Cell cell = getCell(particle);
 		if (!cell.remove(particle)) {
@@ -76,16 +97,16 @@ public class CellStructure {
 	}
 
 	private Cell getCell(final Particle particle) {
-		final double x = particle.position().x();
-		final double y = particle.position().y();
-		return cells.get(cellColumn(x), cellRow(y));
+		return cells.get(cellColumn(particle), cellRow(particle));
 	}
 
-	private int cellColumn(final double x) {
+	private int cellColumn(final Particle particle) {
+		final double x = particle.position().x();
 		return (int) Math.floor((x - walls.x()) / cellWidth);
 	}
 
-	private int cellRow(final double y) {
+	private int cellRow(final Particle particle) {
+		final double y = particle.position().y();
 		return (int) Math.floor((y - walls.y()) / cellHeight);
 	}
 }
