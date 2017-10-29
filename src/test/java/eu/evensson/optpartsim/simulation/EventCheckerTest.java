@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import eu.evensson.optpartsim.physics.Box;
@@ -29,7 +30,7 @@ public class EventCheckerTest {
 
 	private static final double TIME = 100.0;
 
-	private CellStructure cellStructure = mock(CellStructure.class);
+	private final CellStructure cellStructure = mock(CellStructure.class);
 
 	private EventChecker anEventChecker;
 
@@ -108,29 +109,45 @@ public class EventCheckerTest {
 	}
 
 	@DisplayName("returns collision event")
-	@Test
-	void returnsCollisionEvent() {
-		final double speed = 1.0;
-		final Vector velocity = vector(speed, 0.0);
-		final Particle particle = new Particle(ID, TIME, POSITION, velocity);
+	@Nested
+	class ReturnsCollisionEvent {
 
-		final Vector otherPosition = POSITION.add(vector(WALLS.width() / 3.0, 0.0));
-		final Vector otherVelocity = vector(-speed, 0.0);
-		final Particle otherParticle = new Particle(ID + 1, TIME, otherPosition,
-				otherVelocity);
-		when(cellStructure.neighbourParticles(particle))
-				.thenReturn(asList(otherParticle));
+		Particle collidingParticle(final long id, final Particle particle,
+				final double timeToCollision) {
+			final Vector velocity = particle.velocity();
+			final Vector newVelocity = velocity.multiply(-1.0);
 
-		final Event event = anEventChecker.check(particle);
+			final Vector position = particle.position();
+			final Vector collisionPosition = position.add(velocity.multiply(timeToCollision));
+			final Vector newCollisionPosition = collisionPosition.subtract(
+					newVelocity.unit().multiply(Particle.RADIUS * 2));
+			final Vector newPosition = newCollisionPosition.subtract(
+					newVelocity.multiply(timeToCollision));
 
-		final double distanceBetweenParticles = otherPosition.x() - POSITION.x() - 2 * Particle.RADIUS;
-		final double relativeSpeed = 2.0 * speed;
-		final double timeToCollision = distanceBetweenParticles / relativeSpeed;
-		final double collisionTime = TIME + timeToCollision;
-		assertThat(event, is(instanceOf(CollisionEvent.class)));
-		final CollisionEvent collisionEvent = (CollisionEvent) event;
-		assertThat(collisionEvent.time(), is(closeTo(collisionTime, ulp(collisionTime))));
-		assertThat(collisionEvent.particle(), is(particle));
-		assertThat(collisionEvent.otherParticle(), is(otherParticle));
+			return new Particle(id, particle.time(), newPosition, newVelocity);
+		}
+
+		@DisplayName("for the earliest collision")
+		@Test
+		void forEarliestCollision() {
+			final double timeToCollision = 1.0;
+			final Vector velocity = vector(1.0, 0.0);
+			final Particle particle = new Particle(ID, TIME, POSITION, velocity);
+			final Particle collidingParticle1 = collidingParticle(ID + 1, particle, timeToCollision + 1.0);
+			final Particle nonCollidingParticle = new Particle(ID + 2, TIME,
+					POSITION.add(vector(0.0, 2.0)), velocity);
+			final Particle collidingParticle2 = collidingParticle(ID + 3, particle, timeToCollision );
+			when(cellStructure.neighbourParticles(particle)).thenReturn(
+					asList(collidingParticle1, nonCollidingParticle, collidingParticle2));
+
+			final Event event = anEventChecker.check(particle);
+
+			final double collisionTime = TIME + timeToCollision;
+			assertThat(event, is(instanceOf(CollisionEvent.class)));
+			final CollisionEvent collisionEvent = (CollisionEvent) event;
+			assertThat(collisionEvent.time(), is(closeTo(collisionTime, ulp(collisionTime))));
+			assertThat(collisionEvent.particle(), is(particle));
+			assertThat(collisionEvent.otherParticle(), is(collidingParticle2));
+		}
 	}
 }
