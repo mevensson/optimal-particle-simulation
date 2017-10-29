@@ -18,6 +18,8 @@ public class VectorTest {
 	static final double X = 10.0;
 	static final double Y = 20.0;
 
+	static final double NORM = Math.sqrt(X * X + Y * Y);
+
 	Vector aVector;
 
 	@BeforeEach
@@ -35,6 +37,19 @@ public class VectorTest {
 	@Test
 	void hasAY() {
 		assertThat(aVector.y(), is(Y));
+	}
+
+	@DisplayName("has a norm")
+	@Test
+	void hasANorm() {
+		assertThat(aVector.norm(), is(NORM));
+	}
+
+	@DisplayName("has a unit")
+	@Test
+	void hasAUnit() {
+		assertThat(aVector.unit().x(), is(X / NORM));
+		assertThat(aVector.unit().y(), is(Y / NORM));
 	}
 
 	@DisplayName("constructed with polar coordinates")

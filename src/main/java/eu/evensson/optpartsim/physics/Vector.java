@@ -29,6 +29,14 @@ public class Vector {
 		return y;
 	}
 
+	public double norm() {
+		return Math.sqrt(x * x + y * y);
+	}
+
+	public Vector unit() {
+		return multiply(1.0 / norm());
+	}
+
 	public Vector add(final Vector otherVector) {
 		return new Vector(x + otherVector.x, y + otherVector.y);
 	}
