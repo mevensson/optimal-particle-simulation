@@ -25,6 +25,7 @@ import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.physics.Vector;
 import eu.evensson.optpartsim.simulation.CellStructure.ParticleNotFoundException;
+import eu.evensson.optpartsim.testhelpers.CombinableSource;
 import eu.evensson.optpartsim.testhelpers.CombineSource;
 import eu.evensson.optpartsim.testhelpers.LongRangeSource;
 
@@ -163,10 +164,10 @@ public class CellStructureTest {
 		@DisplayName("should return particles in all neighbour cells")
 		@ParameterizedTest(name = "xPos={0}, yPos={1}, xOffset={2}, yOffset={3}")
 		@CombineSource(sources = {
-				@LongRangeSource(min = 0, max = WIDTH_IN_CELLS),
-				@LongRangeSource(min = 0, max = HEIGHT_IN_CELLS),
-				@LongRangeSource(min = -1, max = 1),
-				@LongRangeSource(min = -1, max = 1),
+				@CombinableSource(longRangeSource = @LongRangeSource(min = 0, max = WIDTH_IN_CELLS)),
+				@CombinableSource(longRangeSource = @LongRangeSource(min = 0, max = HEIGHT_IN_CELLS)),
+				@CombinableSource(longRangeSource = @LongRangeSource(min = -1, max = 1)),
+				@CombinableSource(longRangeSource = @LongRangeSource(min = -1, max = 1)),
 		})
 		void particlesInAllNeighbourCells(final long xPos, final long yPos,
 				final long xOffset, final long yOffset) {

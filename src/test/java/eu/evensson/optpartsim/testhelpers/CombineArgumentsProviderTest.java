@@ -1,24 +1,24 @@
 package eu.evensson.optpartsim.testhelpers;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class CombineArgumentsProviderTest {
 
-	@ParameterizedTest(name = "x={0}, y= {1}")
-	@CombineSource(sources= {
-			@LongRangeSource(min=1, max=5),
-			@LongRangeSource(min=10, max=15)
-	})
-	void exampleTest(final long x, final long y) {
-		assertThat(x, is(greaterThanOrEqualTo(1l)));
-		assertThat(x, is(lessThanOrEqualTo(5l)));
+	enum TestEnum {
+		Value1, Value2
+	}
 
-		assertThat(y, is(greaterThanOrEqualTo(10l)));
-		assertThat(y, is(lessThanOrEqualTo(15l)));
+	@ParameterizedTest(name = "anEnum={0}, aLong={1}, aString={2}")
+	@CombineSource(sources = {
+			@CombinableSource(enumSource =
+					@EnumSource(TestEnum.class)),
+			@CombinableSource(longRangeSource =
+					@LongRangeSource(min = 1, max = 5)),
+			@CombinableSource(valueSource =
+					@ValueSource(strings = { "String1", "String2" })),
+	})
+	void exampleTest(final TestEnum anEnum, final long aLong, final String aString) {
 	}
 }
