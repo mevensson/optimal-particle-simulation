@@ -9,13 +9,15 @@ public class DefaultSimulation implements Simulation {
 
 	private final CellStructure cellStructure;
 	private final EventQueue eventQueue;
-	private EventChecker eventChecker;
+	private final EventChecker eventChecker;
+	private final EventHandler eventHandler;
 
-	public DefaultSimulation(final CellStructure cellStructure,
-			final EventQueue eventQueue, final EventChecker eventChecker) {
+	public DefaultSimulation(final CellStructure cellStructure, final EventQueue eventQueue,
+			final EventChecker eventChecker, final EventHandler eventHandler) {
 		this.cellStructure = cellStructure;
 		this.eventQueue = eventQueue;
 		this.eventChecker = eventChecker;
+		this.eventHandler = eventHandler;
 	}
 
 	@Override
@@ -29,19 +31,7 @@ public class DefaultSimulation implements Simulation {
 		try {
 			while (eventQueue.peek().time() <= duration) {
 				final Event event = eventQueue.removeFirst();
-				if (event instanceof WallBounceEvent) {
-					final WallBounceEvent wallBounceEvent = (WallBounceEvent) event;
-					final Particle particle = wallBounceEvent.particle();
-					totalMomentum += particle.momentum(wallBounceEvent.direction());
-
-					final Particle newParticle = particle
-							.move(wallBounceEvent.time())
-							.bounce(wallBounceEvent.direction());
-					cellStructure.remove(particle);
-					cellStructure.insert(newParticle);
-
-					eventQueue.add(eventChecker.check(newParticle));
-				}
+				totalMomentum += eventHandler.handle(event);
 			}
 		} catch (final EventQueueEmptyException e) {
 		}

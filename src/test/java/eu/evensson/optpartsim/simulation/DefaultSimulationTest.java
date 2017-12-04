@@ -38,6 +38,7 @@ public class DefaultSimulationTest {
 	final CellStructure cellStructure = mock(CellStructure.class);
 	final EventQueue eventQueue = new EventQueue();
 	final EventChecker eventChecker = mock(EventChecker.class);
+	final EventHandler eventHandler = new EventHandler(cellStructure, eventChecker, eventQueue);
 
 	final List<Particle> particles = new ArrayList<>();
 
@@ -45,7 +46,7 @@ public class DefaultSimulationTest {
 
 	@BeforeEach
 	void createSimulation() {
-		aSimulation = new DefaultSimulation(cellStructure, eventQueue, eventChecker);
+		aSimulation = new DefaultSimulation(cellStructure, eventQueue, eventChecker, eventHandler);
 	}
 
 	@BeforeEach

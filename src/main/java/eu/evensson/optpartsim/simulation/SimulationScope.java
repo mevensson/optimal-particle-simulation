@@ -1,9 +1,17 @@
 package eu.evensson.optpartsim.simulation;
 
+import java.util.function.Supplier;
+
+import eu.evensson.optpartsim.di.ScopeCache;
+
 public class SimulationScope {
 
-	private double height;
-	private double width;
+	private final ScopeCache<CellStructure> cellStructureCache = new ScopeCache<>();
+	private final ScopeCache<EventChecker> eventCheckerCache = new ScopeCache<>();
+	private final ScopeCache<EventQueue> eventQueueCache = new ScopeCache<>();
+
+	private final double height;
+	private final double width;
 
 	public SimulationScope(final double width, final double height) {
 		this.width = width;
@@ -16,6 +24,18 @@ public class SimulationScope {
 
 	public double getWidth() {
 		return width;
+	}
+
+	public CellStructure getCellStucture(final Supplier<CellStructure> freshCellStructureSupplier) {
+		return cellStructureCache.get(freshCellStructureSupplier);
+	}
+
+	public EventChecker getEventChecker(final Supplier<EventChecker> freshEventCheckerSupplier) {
+		return eventCheckerCache.get(freshEventCheckerSupplier);
+	}
+
+	public EventQueue getEventQueue(final Supplier<EventQueue> freshEventQueueSupplier) {
+		return eventQueueCache.get(freshEventQueueSupplier);
 	}
 
 	// Generated method
