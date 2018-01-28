@@ -1,9 +1,9 @@
 package eu.evensson.optpartsim.simulation;
 
-import static eu.evensson.optpartsim.physics.Vector.vector;
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -11,36 +11,24 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import eu.evensson.optpartsim.physics.Box;
 import eu.evensson.optpartsim.physics.Particle;
-import eu.evensson.optpartsim.physics.Particle.Direction;
-import eu.evensson.optpartsim.physics.Vector;
 
 @DisplayName("A Simulation")
 public class DefaultSimulationTest {
 
-	private static final double START_TIME = 0.0;
-	private static final double MAX_TIME = Double.MAX_VALUE;
-
-	final static Box WALLS = new Box(10.0, 20.0, 4.0, 10.0);
-	final static Vector CENTER = vector(
-			WALLS.x() + WALLS.width() / 2.0,
-			WALLS.y() + WALLS.height() / 2.0);
-
-	static final Event DEFAULT_EVENT = new Event(START_TIME + 1.0);
+	static final Event DEFAULT_EVENT = new Event(0.0);
 
 	final CellStructure cellStructure = mock(CellStructure.class);
 	final EventQueue eventQueue = new EventQueue();
 	final EventChecker eventChecker = mock(EventChecker.class);
-	final EventHandler eventHandler = new EventHandler(cellStructure, eventChecker, eventQueue);
-
-	final List<Particle> particles = new ArrayList<>();
+	final EventHandler eventHandler = mock(EventHandler.class);
 
 	DefaultSimulation aSimulation;
 
@@ -54,258 +42,113 @@ public class DefaultSimulationTest {
 		when(eventChecker.check(any())).thenReturn(DEFAULT_EVENT);
 	}
 
-	@DisplayName("with no particles")
-	@Nested
-	class WithNoParticles {
+	@DisplayName("adds particles to Cell Structure")
+	@ParameterizedTest
+	@ValueSource(ints = { 0, 1, 10 })
+	void addsParticlesToCellStructure(final int numParticles) {
+		final List<Particle> particles = createParticles(numParticles);
 
-		@DisplayName("returns zero momentum")
-		@Test
-		void returnsZeroMomentum() {
-			assertThat(aSimulation.simulate(particles, MAX_TIME), is(0.0));
+		aSimulation.simulate(particles, 0.0);
+
+		for (final Particle particle : particles) {
+			verify(cellStructure).insert(particle);
 		}
 	}
 
-	@DisplayName("with one particle")
-	@Nested
-	class WithAParticle {
-
-		final Particle PARTICLE =
-				new Particle(0, 0.0, vector(0.0, 0.0), vector(0.0, 0.0));
-
-		@BeforeEach
-		void addParticle() {
-			particles.add(PARTICLE);
+	@DisplayName("adds first event for each particle to Event Queue")
+	@ParameterizedTest
+	@ValueSource(ints = { 0, 1, 10 })
+	void addsFirstEventForEachParticleToEventQueue(final int numParticles) {
+		final List<Particle> particles = createParticles(numParticles);
+		final List<Event> events = new ArrayList<Event>();
+		final double duration = 0.0;
+		double time = duration + 1.0;
+		for (final Particle particle : particles) {
+			final Event event = new Event(time++);
+			events.add(event);
+			when(eventChecker.check(particle)).thenReturn(event);
 		}
 
-		@DisplayName("adds particle to Cell Structure")
-		@Test
-		void addsParticleToCellStructure() {
-			aSimulation.simulate(particles, START_TIME);
+		aSimulation.simulate(particles, duration);
 
-			verify(cellStructure).insert(PARTICLE);
-		}
-	}
-
-	@DisplayName("with wall bounce left particle")
-	@Nested
-	class WithWallBounceLeftParticle {
-
-		final double MASS = 1.0;
-		final double SPEED = 3.0;
-		final Particle PARTICLE =
-				new Particle(0, 0.0, CENTER, vector(-SPEED, 0.0));
-
-		final double WALL_BOUNCE_TIME = (CENTER.x() - WALLS.x()) / SPEED;
-		final Event WALL_BOUNCE_EVENT = new WallBounceEvent(
-				WALL_BOUNCE_TIME, PARTICLE, Particle.Direction.HORIZONTAL);
-
-		final Particle NEW_PARTICLE =
-				PARTICLE.move(WALL_BOUNCE_TIME).bounce(Direction.HORIZONTAL);
-		final Event NEW_EVENT = new Event(Double.MAX_VALUE);
-
-		@BeforeEach
-		void addParticle() {
-			particles.add(PARTICLE);
-		}
-
-		@BeforeEach
-		void setEvent() {
-			when(eventChecker.check(PARTICLE)).thenReturn(WALL_BOUNCE_EVENT);
-			when(eventChecker.check(NEW_PARTICLE)).thenReturn(NEW_EVENT);
-		}
-
-		@DisplayName("adds Wall Bounce Event to Event Queue")
-		@Test
-		void addsWallBounceEventToEventQueue() {
-			aSimulation.simulate(particles, START_TIME);
-
-			assertThat(eventQueue.removeFirst(), is(WALL_BOUNCE_EVENT));
-		}
-
-		@DisplayName("does not add momentum for Wall Bounce Event "
-				+ "if simulation duration is less than wall bounce time")
-		@Test
-		void doesNotAddMomentumForWallBounceEvent() {
-			final double momentum = aSimulation.simulate(
-					particles, Math.nextDown(WALL_BOUNCE_TIME));
-
-			assertThat(momentum, is(0.0));
-		}
-
-		@DisplayName("adds momentum for Wall Bounce Event "
-				+ "if simulation duration is at wall bounce time")
-		@Test
-		void addsMomentumForWallBounceEvent() {
-			final double momentum =
-					aSimulation.simulate(particles, WALL_BOUNCE_TIME);
-
-			assertThat(momentum, is(SPEED * MASS));
-		}
-
-		@DisplayName("moves and bounces particle in cellstructure")
-		@Test
-		void movesAndBouncesParticleInCellStructure() {
-			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
-
-			verify(cellStructure).remove(PARTICLE);
-			verify(cellStructure).insert(NEW_PARTICLE);
-		}
-
-		@DisplayName("adds particles next event to event queue")
-		@Test
-		void adds() {
-			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
-
-			assertThat(eventQueue.removeFirst(), is(sameInstance(NEW_EVENT)));
+		for (final Event event : events) {
+			assertThat(eventQueue.removeFirst(), is(event));
 		}
 	}
 
-	@DisplayName("with wall bounce right particle")
-	@Nested
-	class WithWallBounceRightParticle {
+	@DisplayName("handles events until duration is up")
+	@ParameterizedTest
+	@ValueSource(doubles = { -0.0001, 0.0, 9.9999, 10.0, 10.0001 })
+	void handlesEventsUntilDuration(final double duration) {
+		final Particle particle = mock(Particle.class);
+		final List<Event> events = new ArrayList<Event>();
+		mockEventsWithIncreasingTime(events, 0.0, 1.0);
 
-		final double MASS = 1.0;
-		final double SPEED = 3.0;
-		final Particle PARTICLE =
-				new Particle(0, 0.0, CENTER, vector(SPEED, 0.0));
+		aSimulation.simulate(asList(particle), duration);
 
-		final double WALL_BOUNCE_TIME =
-				(WALLS.x() + WALLS.width() - CENTER.x()) / SPEED;
-		final Event WALL_BOUNCE_EVENT = new WallBounceEvent(
-				WALL_BOUNCE_TIME, PARTICLE, Particle.Direction.HORIZONTAL);
-
-		final Particle NEW_PARTICLE =
-				PARTICLE.move(WALL_BOUNCE_TIME).bounce(Direction.HORIZONTAL);
-		final Event NEW_EVENT = new Event(Double.MAX_VALUE);
-
-		@BeforeEach
-		void addParticle() {
-			particles.add(PARTICLE);
-		}
-
-		@BeforeEach
-		void setEvent() {
-			when(eventChecker.check(PARTICLE)).thenReturn(WALL_BOUNCE_EVENT);
-			when(eventChecker.check(NEW_PARTICLE)).thenReturn(NEW_EVENT);
-		}
-
-		@DisplayName("adds Wall Bounce Event to Event Queue")
-		@Test
-		void addsWallBounceEventToEventQueue() {
-			aSimulation.simulate(particles, START_TIME);
-
-			assertThat(eventQueue.removeFirst(), is(WALL_BOUNCE_EVENT));
-		}
-
-		@DisplayName("does not add momentum for Wall Bounce Event "
-				+ "if simulation duration is less than wall bounce time")
-		@Test
-		void doesNotAddMomentumForWallBounceEvent() {
-			final double momentum = aSimulation.simulate(
-					particles, Math.nextDown(WALL_BOUNCE_TIME));
-
-			assertThat(momentum, is(0.0));
-		}
-
-		@DisplayName("adds momentum for Wall Bounce Event "
-				+ "if simulation duration is at wall bounce time")
-		@Test
-		void addsMomentumForWallBounceEvent() {
-			final double momentum =
-					aSimulation.simulate(particles, WALL_BOUNCE_TIME);
-
-			assertThat(momentum, is(SPEED * MASS));
-		}
-
-		@DisplayName("moves and bounces particle in cellstructure")
-		@Test
-		void movesAndBouncesParticleInCellStructure() {
-			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
-
-			verify(cellStructure).remove(PARTICLE);
-			verify(cellStructure).insert(NEW_PARTICLE);
-		}
-
-		@DisplayName("adds particles next event to event queue")
-		@Test
-		void adds() {
-			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
-
-			assertThat(eventQueue.removeFirst(), is(sameInstance(NEW_EVENT)));
+		for (final Event event : events) {
+			if (event.time() <= duration) {
+				verify(eventHandler).handle(event);
+			}
 		}
 	}
 
-	@DisplayName("with wall bounce top particle")
-	@Nested
-	class WithWallBounceTopParticle {
+	@DisplayName("returns sum of momentum for all handled events")
+	@ParameterizedTest
+	@ValueSource(doubles = { -0.0001, 0.0, 9.9999, 10.0, 10.0001 })
+	void returnsSumOfMomentumForAllHandledEvents(final double duration) {
+		final Particle particle = mock(Particle.class);
+		final List<Event> events = new ArrayList<Event>();
+		final double startMomentum = 1.2;
+		final double incrementMomentum = 0.2;
+		mockEventsWithIncreasingMomentum(events, 0.0, 1.0, startMomentum, incrementMomentum);
 
-		final double MASS = 1.0;
-		final double SPEED = 3.0;
-		final Particle PARTICLE =
-				new Particle(0, 0.0, CENTER, vector(0.0, -SPEED));
+		final double totalMomentum = aSimulation.simulate(asList(particle), duration);
 
-		final double WALL_BOUNCE_TIME = (CENTER.y() - WALLS.y()) / SPEED;
-		final Event WALL_BOUNCE_EVENT = new WallBounceEvent(
-				WALL_BOUNCE_TIME, PARTICLE, Particle.Direction.VERTICAL);
+		final double expectedTotalMomentum = events.size() * (2 * startMomentum + (events.size() - 1) * incrementMomentum) / 2;
+		assertThat(totalMomentum, is(closeTo(expectedTotalMomentum, Math.ulp(expectedTotalMomentum))));
+	}
 
-		final Particle NEW_PARTICLE =
-				PARTICLE.move(WALL_BOUNCE_TIME).bounce(Direction.VERTICAL);
-		final Event NEW_EVENT = new Event(Double.MAX_VALUE);
-
-		@BeforeEach
-		void addParticle() {
-			particles.add(PARTICLE);
+	private List<Particle> createParticles(final int numParticles) {
+		final List <Particle> particles = new ArrayList<>();
+		for (int i = 0; i < numParticles; ++i) {
+			particles.add(mock(Particle.class));
 		}
+		return particles;
+	}
 
-		@BeforeEach
-		void setEvent() {
-			when(eventChecker.check(PARTICLE)).thenReturn(WALL_BOUNCE_EVENT);
-			when(eventChecker.check(NEW_PARTICLE)).thenReturn(NEW_EVENT);
-		}
+	private List<Event> mockEventsWithIncreasingTime(
+			final List<Event> events, final double start, final double increment) {
+		final Event firstEvent = new Event(start);
+		when(eventChecker.check(any())).thenReturn(firstEvent);
 
-		@DisplayName("adds Wall Bounce Event to Event Queue")
-		@Test
-		void addsWallBounceEventToEventQueue() {
-			aSimulation.simulate(particles, START_TIME);
+		final AtomicReference<Double> nextTime = new AtomicReference<Double>(start + increment);
+		when(eventHandler.handle(any())).then(invocation -> {
+			final Event event = new Event(nextTime.getAndUpdate((currTime) -> currTime + increment));
+			events.add(event);
+			eventQueue.add(event);
+			return 0.0;
+		});
 
-			assertThat(eventQueue.removeFirst(), is(WALL_BOUNCE_EVENT));
-		}
+		return events;
+	}
 
-		@DisplayName("does not add momentum for Wall Bounce Event "
-				+ "if simulation duration is less than wall bounce time")
-		@Test
-		void doesNotAddMomentumForWallBounceEvent() {
-			final double momentum = aSimulation.simulate(
-					particles, Math.nextDown(WALL_BOUNCE_TIME));
+	private List<Event> mockEventsWithIncreasingMomentum(
+			final List<Event> events,
+			final double startTime, final double incrementTime,
+			final double startMomentum, final double incrementMomentum) {
+		final Event firstEvent = new Event(startTime);
+		when(eventChecker.check(any())).thenReturn(firstEvent);
 
-			assertThat(momentum, is(0.0));
-		}
+		final AtomicReference<Double> nextTime = new AtomicReference<Double>(startTime + incrementTime);
+		final AtomicReference<Double> nextMomentum = new AtomicReference<Double>(startMomentum);
+		when(eventHandler.handle(any())).then(invocation -> {
+			final Event event = new Event(nextTime.getAndUpdate(currTime -> currTime + incrementTime));
+			events.add(event);
+			eventQueue.add(event);
+			return nextMomentum.getAndUpdate(currMomentum -> currMomentum + incrementMomentum);
+		});
 
-		@DisplayName("adds momentum for Wall Bounce Event "
-				+ "if simulation duration is at wall bounce time")
-		@Test
-		void addsMomentumForWallBounceEvent() {
-			final double momentum =
-					aSimulation.simulate(particles, WALL_BOUNCE_TIME);
-
-			assertThat(momentum, is(SPEED * MASS));
-		}
-
-		@DisplayName("moves and bounces particle in cellstructure")
-		@Test
-		void movesAndBouncesParticleInCellStructure() {
-			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
-
-			verify(cellStructure).remove(PARTICLE);
-			verify(cellStructure).insert(NEW_PARTICLE);
-		}
-
-		@DisplayName("adds particles next event to event queue")
-		@Test
-		void adds() {
-			aSimulation.simulate(particles, WALL_BOUNCE_TIME);
-
-			assertThat(eventQueue.removeFirst(), is(sameInstance(NEW_EVENT)));
-		}
+		return events;
 	}
 }
