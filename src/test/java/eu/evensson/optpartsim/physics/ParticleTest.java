@@ -16,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSources;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import eu.evensson.optpartsim.physics.Particle.Direction;
@@ -281,22 +282,16 @@ public class ParticleTest {
 	class CollidesWithOtherParticle {
 		@DisplayName("when other particle is head on on x-axis")
 		@ParameterizedTest
-		@CsvSource({
-				"0.0, 6.0, 1.0, 0.0, 14.0, -1.0, 3.0", // Zero time
-				"1.3, 6.0, 1.0, 1.3, 14.0, -1.0, 4.3", // Same time
-				"0.0, 6.0, 1.0, 1.0, 13.0, -1.0, 3.0", // Different times
-				"1.0, 13.0, -1.0, 0.0, 6.0, 1.0, 3.0", // Reversed
-				"3.0, 9.0, 1.0, 0.0, 14.0, -1.0, 3.0", // Particle at collision time
-				"0.0, 6.0, 1.0, 3.0, 11.0, -1.0, 3.0", // Other at collision time
-				"3.0, 9.0, 1.0, 3.0, 11.0, -1.0, 3.0", // Touching
-				})
-		void headOnXAxis(
-				final double t1, final double x1, final double xs1,
-				final double t2, final double x2, final double xs2,
-				final double expectedCollisionTime) {
-			final Particle p1 = new Particle(ID, t1, vector(x1, 0.0), vector(xs1, 0.0));
-			final Particle p2 = new Particle(ID, t2, vector(x2, 0.0), vector(xs2, 0.0));
-
+		@CollisionSources({
+			@CollisionSource(time = 3.0, p1Time = 0.0, p1Ang = 0.0, p2Time = 0.0, p2Ang = Math.PI), // Zero time
+			@CollisionSource(time = 4.3, p1Time = 1.3, p1Ang = 0.0, p2Time = 1.3, p2Ang = Math.PI), // Same time
+			@CollisionSource(time = 3.0, p1Time = 0.0, p1Ang = 0.0, p2Time = 1.0, p2Ang = Math.PI), // Different times
+			@CollisionSource(time = 3.0, p1Time = 1.0, p1Ang = Math.PI, p2Time = 0.0, p2Ang = 0.0), // Reversed
+			@CollisionSource(time = 3.0, p1Time = 3.0, p1Ang = 0.0, p2Time = 0.0, p2Ang = Math.PI), // Particle 1 at collision time
+			@CollisionSource(time = 3.0, p1Time = 0.0, p1Ang = 0.0, p2Time = 3.0, p2Ang = Math.PI), // Particle 2 at collision time
+			@CollisionSource(time = 3.0, p1Time = 3.0, p1Ang = 0.0, p2Time = 3.0, p2Ang = Math.PI), // Touching
+		})
+		void headOnXAxis(final double expectedCollisionTime, final Particle p1, final Particle p2) {
 			final Optional<Double> collisionTime = p1.collisionTime(p2);
 
 			assertThat(collisionTime,
@@ -306,19 +301,13 @@ public class ParticleTest {
 
 		@DisplayName("when other particle is head on on y-axis")
 		@ParameterizedTest
-		@CsvSource({
-			"0.0, 6.0, 1.0, 0.0, 14.0, -1.0, 3.0", // Zero time
-			"1.3, 6.0, 1.0, 1.3, 14.0, -1.0, 4.3", // Same time
-			"0.0, 6.0, 1.0, 1.0, 13.0, -1.0, 3.0", // Different times
-			"1.0, 13.0, -1.0, 0.0, 6.0, 1.0, 3.0", // Reversed
-			})
-		void headOnYAxis(
-				final double t1, final double y1, final double ys1,
-				final double t2, final double y2, final double ys2,
-				final double expectedCollisionTime) {
-			final Particle p1 = new Particle(ID, t1, vector(0.0, y1), vector(0.0, ys1));
-			final Particle p2 = new Particle(ID, t2, vector(0.0, y2), vector(0.0, ys2));
-
+		@CollisionSources({
+			@CollisionSource(time = 3.0, p1Time = 0.0, p1Ang = Math.PI / 2, p2Time = 0.0, p2Ang = 3 * Math.PI / 2), // Zero time
+			@CollisionSource(time = 4.3, p1Time = 1.3, p1Ang = Math.PI / 2, p2Time = 1.3, p2Ang = 3 * Math.PI / 2), // Same time
+			@CollisionSource(time = 3.0, p1Time = 0.0, p1Ang = Math.PI / 2, p2Time = 1.0, p2Ang = 3 * Math.PI / 2), // Different times
+			@CollisionSource(time = 3.0, p1Time = 1.0, p1Ang = 3 * Math.PI / 2, p2Time = 0.0, p2Ang = Math.PI / 2), // Reversed
+		})
+		void headOnYAxis(final double expectedCollisionTime, final Particle p1, final Particle p2) {
 			final Optional<Double> collisionTime = p1.collisionTime(p2);
 
 			assertThat(collisionTime,
