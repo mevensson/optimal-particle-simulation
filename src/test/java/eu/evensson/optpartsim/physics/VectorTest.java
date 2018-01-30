@@ -18,6 +18,9 @@ public class VectorTest {
 	static final double X = 10.0;
 	static final double Y = 20.0;
 
+	static final double OTHER_X = 15.0;
+	static final double OTHER_Y = 25.0;
+
 	static final double NORM = Math.sqrt(X * X + Y * Y);
 
 	Vector aVector;
@@ -52,6 +55,15 @@ public class VectorTest {
 		assertThat(aVector.unit().y(), is(Y / NORM));
 	}
 
+
+	@DisplayName("has a dot product with another vector")
+	@Test
+	void hasADotProductWithAnotherVector() {
+		final Vector anotherVector = vector(OTHER_X, OTHER_Y);
+		assertThat(aVector.dotProduct(anotherVector), is(X * OTHER_X + Y * OTHER_Y));
+	}
+
+
 	@DisplayName("constructed with polar coordinates")
 	@Nested
 	class ConstructesWithPolarCoordinates {
@@ -81,9 +93,6 @@ public class VectorTest {
 	@DisplayName("when added with other vector")
 	@Nested
 	class WhenAddedWithOtherVector {
-
-		static final double OTHER_X = 15.0;
-		static final double OTHER_Y = 25.0;
 
 		Vector otherVector;
 		Vector addedVector;
@@ -127,9 +136,6 @@ public class VectorTest {
 	@DisplayName("when subtracted with other vector")
 	@Nested
 	class WhenSubtractedWithOtherVector {
-
-		static final double OTHER_X = 15.0;
-		static final double OTHER_Y = 25.0;
 
 		Vector otherVector;
 		Vector resultVector;
