@@ -8,6 +8,7 @@ import static java.lang.Math.ulp;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import java.util.Optional;
 
@@ -421,6 +422,126 @@ public class ParticleTest {
 			final Optional<Double> collisionTime = aParticle.collisionTime(aParticle);
 
 			assertThat(collisionTime, isEmpty());
+		}
+	}
+
+	@DisplayName("when collided with other particle")
+	@Nested
+	class WhenCollidedWithOtherParticle {
+
+		@DisplayName("is not modified")
+		@ParameterizedTest
+		@CollisionSources(@CollisionSource(time = TIME))
+		void isNotModified(final double t, final Particle particle, final Particle otherParticle) {
+			final long id = particle.id();
+			final double time = particle.time();
+			final double px = particle.position().x();
+			final double py = particle.position().y();
+			final double vx = particle.velocity().x();
+			final double vy = particle.velocity().y();
+
+			particle.collide(otherParticle);
+
+			assertThat(particle,
+					is(new Particle(id, time, vector(px, py), vector(vx, vy))));
+		}
+
+		@DisplayName("the other particle is not modified")
+		@ParameterizedTest
+		@CollisionSources(@CollisionSource(time = TIME))
+		void otherParticleIsNotModified(final double t, final Particle particle, final Particle otherParticle) {
+			final long id = otherParticle.id();
+			final double time = otherParticle.time();
+			final double px = otherParticle.position().x();
+			final double py = otherParticle.position().y();
+			final double vx = otherParticle.velocity().x();
+			final double vy = otherParticle.velocity().y();
+
+			particle.collide(otherParticle);
+
+			assertThat(otherParticle,
+					is(new Particle(id, time, vector(px, py), vector(vx, vy))));
+		}
+
+		@DisplayName("returns a Particle with")
+		@Nested
+		class ReturnsAParticleWith {
+
+			@DisplayName("the same id")
+			@ParameterizedTest
+			@CollisionSources(@CollisionSource(time = TIME))
+			void hasSameId(final double time, final Particle particle, final Particle otherParticle) {
+				final Particle newParticle = particle.collide(otherParticle);
+
+				assertThat(newParticle.id(), is(particle.id()));
+			}
+
+			@DisplayName("the time of the collision")
+			@ParameterizedTest
+			@CollisionSources(@CollisionSource(time = 1.0, p1Time = 0.0))
+			void hasTheTimeOfTheCollision(final double time, final Particle particle, final Particle otherParticle) {
+				final Particle newParticle = particle.collide(otherParticle);
+
+				assertThat(newParticle.time(), is(time));
+			}
+
+			@DisplayName("the position of the collision")
+			@ParameterizedTest
+			@CollisionSources(@CollisionSource(time = 1.0, p1Time = 0.0))
+			void hasThePositionOfTheCollision(final double time, final Particle particle, final Particle otherParticle) {
+				final Particle newParticle = particle.collide(otherParticle);
+
+				assertThat(newParticle.position(), is(particle.move(time).position()));
+			}
+
+			@DisplayName("a new velocity")
+			@ParameterizedTest
+			@CollisionSources(@CollisionSource(time = 1.0, p1Time = 0.0))
+			void hasANewVelocity(final double time, final Particle particle, final Particle otherParticle) {
+				final Particle newParticle = particle.collide(otherParticle);
+
+				assertThat(newParticle.velocity(), is(not(particle.velocity())));
+			}
+		}
+
+		@DisplayName("the sum of the horizontal momentum is unchanged")
+		@ParameterizedTest
+		@CollisionSources(@CollisionSource(time = 1.0, p1Time = 0.0))
+		void theSumOfTheHorizontalMomentumIsUnchanged(final double time, final Particle particle, final Particle otherParticle) {
+			final Particle newParticle = particle.collide(otherParticle);
+			final Particle newOtherParticle = otherParticle.collide(particle);
+
+			final double newMomentum = newParticle.momentum(Direction.HORIZONTAL) + newOtherParticle.momentum(Direction.HORIZONTAL);
+			final double expectedMomentum = particle.momentum(Direction.HORIZONTAL) + otherParticle.momentum(Direction.HORIZONTAL);
+			assertThat(newMomentum, is(closeTo(expectedMomentum, ulp(expectedMomentum))));
+		}
+
+		@DisplayName("the sum of the vertical momentum is unchanged")
+		@ParameterizedTest
+		@CollisionSources(@CollisionSource(time = 1.0, p1Time = 0.0))
+		void theSumOfTheVerticalMomentumIsUnchanged(final double time, final Particle particle, final Particle otherParticle) {
+			final Particle newParticle = particle.collide(otherParticle);
+			final Particle newOtherParticle = otherParticle.collide(particle);
+
+			final double newMomentum = newParticle.momentum(Direction.VERTICAL) + newOtherParticle.momentum(Direction.VERTICAL);
+			final double expectedMomentum = particle.momentum(Direction.VERTICAL) + otherParticle.momentum(Direction.VERTICAL);
+			assertThat(newMomentum, is(closeTo(expectedMomentum, ulp(expectedMomentum))));
+		}
+
+		@DisplayName("the sum of the energy is unchanged")
+		@ParameterizedTest
+		@CollisionSources(@CollisionSource(time = 1.0, p1Time = 0.0))
+		void theSumOfTheEnergyIsUnchanged(final double time, final Particle particle, final Particle otherParticle) {
+			final Particle newParticle = particle.collide(otherParticle);
+			final Particle newOtherParticle = otherParticle.collide(particle);
+
+			final double newEnergy = energy(newParticle) + energy(newOtherParticle);
+			final double expectedEnergy = energy(particle) + energy(otherParticle);
+			assertThat(newEnergy, is(closeTo(expectedEnergy, ulp(expectedEnergy))));
+		}
+
+		double energy(final Particle particle) {
+			return Particle.MASS * particle.velocity().norm();
 		}
 	}
 }

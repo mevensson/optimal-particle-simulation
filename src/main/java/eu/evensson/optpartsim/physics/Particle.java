@@ -135,6 +135,19 @@ public class Particle {
 		return Optional.empty();
 	}
 
+	public Particle collide(final Particle otherParticle) {
+		final Optional<Double> collisionTime = collisionTime(otherParticle);
+		return collisionTime.map(time -> {
+			final Particle p1 = move(time);
+			final Particle p2 = otherParticle.move(time);
+			final Vector x1MinusX2 = p1.position.subtract(p2.position);
+			final Vector v1MinusV2 = p1.velocity.subtract(p2.velocity);
+			final double norm = x1MinusX2.norm();
+			final Vector velocityChange = x1MinusX2.multiply(v1MinusV2.dotProduct(x1MinusX2) / (norm * norm));
+			return new Particle(p1.id, p1.time, p1.position, p1.velocity.subtract(velocityChange));
+		}).get();
+	}
+
 	public Particle move(final double newTime) {
 		final Vector movedDistance = velocity.multiply(newTime - time);
 		final Vector newPosition = position.add(movedDistance);
