@@ -16,6 +16,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import eu.evensson.optpartsim.physics.CollisionSource;
+import eu.evensson.optpartsim.physics.CollisionSources;
 import eu.evensson.optpartsim.physics.Particle;
 import eu.evensson.optpartsim.physics.Particle.Direction;
 import eu.evensson.optpartsim.physics.Vector;
@@ -96,6 +98,82 @@ public class EventHandlerTest {
 
 		private Particle particleWithMomentum(final Vector momentum) {
 			return new Particle(0, TIME, vector(0, 0), momentum.multiply(1.0 / Particle.MASS));
+		}
+	}
+
+
+	@DisplayName("with collision event")
+	@Nested
+	class WithCollisionEvent {
+		@DisplayName("returns zero momentum")
+		@CollisionSources(@CollisionSource(time = TIME))
+		void returnsZeroMomentum(final double time, final Particle particle1, final Particle particle2) {
+			final Event event = new CollisionEvent(time, particle1, particle2);
+
+			final double momentum = eventHandler.handle(event);
+			assertThat(momentum, is(0.0));
+		}
+
+		@DisplayName("moves and bounces first particle in cellstructure")
+		@ParameterizedTest
+		@CollisionSources(@CollisionSource(time = TIME))
+		void movesAndBouncesFirstParticleInCellStructure(final double time,
+				final Particle particle1, final Particle particle2) {
+			final Event event = new CollisionEvent(time, particle1, particle2);
+
+			eventHandler.handle(event);
+
+			verify(cellStructure).remove(particle1);
+			final Particle newParticle = particle1.collide(particle2);
+			verify(cellStructure).insert(newParticle);
+		}
+
+		@DisplayName("moves and bounces second particle in cellstructure")
+		@ParameterizedTest
+		@CollisionSources(@CollisionSource(time = TIME))
+		void movesAndBouncesSecondParticleInCellStructure(final double time,
+				final Particle particle1, final Particle particle2) {
+			final Event event = new CollisionEvent(time, particle1, particle2);
+
+			eventHandler.handle(event);
+
+			verify(cellStructure).remove(particle2);
+			final Particle newParticle = particle2.collide(particle1);
+			verify(cellStructure).insert(newParticle);
+		}
+
+		@DisplayName("adds first particles next event to event queue")
+		@ParameterizedTest
+		@CollisionSources(@CollisionSource(time = TIME))
+		void addsFirstParticlesNextEventToEventQueue(final double time,
+				final Particle particle1, final Particle particle2) {
+			final Event event = new CollisionEvent(time, particle1, particle2);
+
+			final Particle newParticle = particle1.collide(particle2);
+			final Event nextEvent = mock(Event.class);
+			when(eventChecker.check(newParticle)).thenReturn(nextEvent);
+
+			eventHandler.handle(event);
+
+			verify(eventChecker).check(newParticle);
+			verify(eventQueue).add(same(nextEvent));
+		}
+
+		@DisplayName("adds second particles next event to event queue")
+		@ParameterizedTest
+		@CollisionSources(@CollisionSource(time = TIME))
+		void addsSecondParticlesNextEventToEventQueue(final double time,
+				final Particle particle1, final Particle particle2) {
+			final Event event = new CollisionEvent(time, particle1, particle2);
+
+			final Particle newParticle = particle2.collide(particle1);
+			final Event nextEvent = mock(Event.class);
+			when(eventChecker.check(newParticle)).thenReturn(nextEvent);
+
+			eventHandler.handle(event);
+
+			verify(eventChecker).check(newParticle);
+			verify(eventQueue).add(same(nextEvent));
 		}
 	}
 }

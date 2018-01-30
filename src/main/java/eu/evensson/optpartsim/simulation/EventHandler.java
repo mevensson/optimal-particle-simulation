@@ -18,10 +18,27 @@ public class EventHandler {
 
 	public double handle(final Event event) {
 		double momentum = 0;
-		if (event instanceof WallBounceEvent) {
+		if (event instanceof CollisionEvent) {
+			handleCollisionEvent((CollisionEvent) event);
+		} else if (event instanceof WallBounceEvent) {
 			momentum = handleWallBounceEvent((WallBounceEvent) event);
 		}
 		return momentum;
+	}
+
+	private void handleCollisionEvent(final CollisionEvent collisionEvent) {
+		final Particle particle = collisionEvent.particle();
+		final Particle otherParticle = collisionEvent.otherParticle();
+		handleCollision(particle, otherParticle);
+		handleCollision(otherParticle, particle);
+	}
+
+	private void handleCollision(final Particle particle, final Particle otherParticle) {
+		cellStructure.remove(particle);
+
+		final Particle newParticle1 = particle.collide(otherParticle);
+		cellStructure.insert(newParticle1);
+		eventQueue.add(eventChecker.check(newParticle1));
 	}
 
 	private double handleWallBounceEvent(final WallBounceEvent wallBounceEvent) {
